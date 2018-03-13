@@ -1,0 +1,16 @@
+{% extends 'main.html' %}
+
+{% block body %}
+
+{% if adv_list %}
+  <ul> {{username}} </ul>
+  <ul> {{adv_list.title}} </ul>
+  <ul> {{adv_list.note}} </ul>
+  <ul> {{adv_list.date}} </ul>
+  <ul> {{adv_list.price}} </ul>
+  <li><a href="/advertisement/{{adv_list.id}}/edit"> Редактировать </a></li>
+  <li><a href="/advertisement"> Объявления </a></li>
+{% else %}
+    <p>No polls are available.</p>
+{% endif %}
+{% endblock %}

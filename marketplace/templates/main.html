@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title> Marketplace </title>
+</head>
+<body>
+  <div class="top-bar">
+    <section class="top-bar-selection">
+      <ul class="left">
+        <a href="/"> Домой </a>
+      </ul>
+      <ul class="right">
+        {% if username %}
+          <a href="/user/logout/"> Выйти ({{username}}) </a>
+        {% else %}
+          <a href="/user/login/"> Войти </a>
+        {% endif %}
+      </ul>
+    </section>
+  </div>
+
+  <div class="row">
+    {% block body %}
+    {% endblock %}
+  </div>
+</body>
+</html>
