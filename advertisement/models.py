@@ -2,11 +2,15 @@
 #from __future__ import unicode_literals
 
 from django.db import models
+# from django.contrib.contenttypes.fields import GenericForeignKey
 # from django.contrib.auth.models.User import User
 from django.conf import settings
 
 
 class Advertisement(models.Model):
+    # class Meta:
+    #     abstract = True
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -24,10 +28,8 @@ class Advertisement(models.Model):
         auto_now_add=True,
     )
 
-    ident = models.IntegerField(blank = True,)
-
     price = models.IntegerField()
-
+    ident = models.IntegerField(blank = True,)
     weight = models.IntegerField(blank = True,)
     year = models.IntegerField(blank = True,)
 
@@ -38,11 +40,12 @@ class Advertisement(models.Model):
       ])
 
 class Bicycle(Advertisement):
-    advertisement = models.ForeignKey(
-        Advertisement,
-        on_delete=models.CASCADE,
-        related_name='bicycles'
-    )
+    # advertisement = models.ForeignKey(
+    #     Advertisement,
+    #     on_delete=models.CASCADE,
+    #     related_name='bicycles'
+    # )
+    advertisement = models.OneToOneField(Advertisement)
 
     size = models.IntegerField()
 

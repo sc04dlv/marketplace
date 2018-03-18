@@ -10,8 +10,8 @@ from django.views import generic
 from django.contrib import auth
 from django.core.paginator import Paginator
 
-from .models import Advertisement
-from .forms import NameForm
+from .models import Advertisement, Bicycle
+from .forms import NameForm, BicycleForm
 
 # научиться передавать пользователя в Index и Detail (или отказаться от их использования)
 # передвать пользователя в глобальный шаблон (глобальная переменная?)
@@ -34,7 +34,7 @@ def list(request, page_number=1):
     adv_list = Advertisement.objects.order_by('-date')
     current_page = Paginator(adv_list, 6)
     args['adv_list'] = current_page.page(page_number)
-    args['username'] = request.user.username
+    # args['username'] = request.user.username
     return render(request, 'advertisement/list.html', args )
 
 def view(request, advertisement_id):
@@ -42,13 +42,6 @@ def view(request, advertisement_id):
     args['adv_list'] = get_object_or_404(Advertisement, id=advertisement_id)
     args['username'] = request.user.username
     return render(request, 'advertisement/view.html', args)
-
-def view_bicycle(request, advertisement_id):
-    args = {}
-    args['adv_list'] = get_object_or_404(Bicycle, advertisement=advertisement_id)
-    args['username'] = request.user.username
-    return render(request, 'advertisement/bicycle/view_bicycle.html', args)
-
 
 def new(request):
     # @login_required
@@ -86,3 +79,32 @@ def edit(request, advertisement_id):
         args['advertisement_id'] = advertisement_id
         args['username'] = request.user.username #auth.get_user(request).username
         return render(request, 'advertisement/edit.html', args )
+
+####### BICYCLE ######
+
+def view_bicycle(request, advertisement_id):
+    args = {}
+    # args['adv_list'] = get_object_or_404(Advertisement, id=advertisement_id)
+    args['bicycle_list'] = get_object_or_404(Bicycle, advertisement=advertisement_id)
+    args['id'] = advertisement_id
+    args['username'] = request.user.username
+    return render(request, 'advertisement/view_bicycle.html', args)
+
+def edit_bicycle(request, advertisement_id):
+    args = {}
+    if not request.user.is_authenticated():
+        return render(request, 'user/login_error.html')
+    if request.method == 'POST':
+        form = BicycleForm(request.POST)
+        if form.is_valid():
+            bicycle = form.save(commit=False)
+            bicycle.ident = 123
+            bicycle.user = User.objects.get(id=request.user.id)
+            bicycle.save()
+            return redirect('view_bicycle', advertisement_id=bicycle.advertisement)
+    else:
+        bicycle = Bicycle.objects.get(advertisement=advertisement_id)
+        args['form'] = BicycleForm(instance=bicycle)
+        args['advertisement_id'] = advertisement_id
+        args['username'] = request.user.username #auth.get_user(request).username
+        return render(request, 'advertisement/edit_bicycle.html', args )

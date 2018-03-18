@@ -2,13 +2,15 @@
 
 {% block body %}
 
-{% if adv_list %}
+{% if bicycle_list %}
   <ul> {{username}} </ul>
-  <ul> {{adv_list.title}} </ul>
-  <ul> {{adv_list.note}} </ul>
-  <ul> {{adv_list.date}} </ul>
-  <ul> {{adv_list.price}} </ul>
-  <li><a href="/advertisement/{{adv_list.id}}/edit"> Редактировать </a></li>
+  <ul> {{bicycle_list.title}} </ul>
+  <ul> {{bicycle_list.note}} </ul>
+  <ul> {{bicycle_list.date}} </ul>
+  <ul> {{bicycle_list.price}} р. </ul>
+  <ul> {{bicycle_list.size}} кг. </ul>
+  <ul> {{bicycle_list.bicycle_type}} </ul>
+  <li><a href="/advertisement/bicycle/{{id}}/edit"> Редактировать </a></li>
   <li><a href="/advertisement"> Объявления </a></li>
 {% else %}
     <p>No polls are available.</p>

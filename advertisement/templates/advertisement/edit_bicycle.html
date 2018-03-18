@@ -1,0 +1,10 @@
+{% extends 'main.html' %}
+
+{% block body %}
+{% url 'edit_bicycle' advertisement_id %}
+<form action="/advertisement/bicycle/{{ advertisement_id }}/edit/" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Submit" />
+</form>
+{% endblock %}
