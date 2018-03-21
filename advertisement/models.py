@@ -4,15 +4,16 @@
 from django.db import models
 # from django.contrib.contenttypes.fields import GenericForeignKey
 # from django.contrib.auth.models.User import User
+from django.contrib.auth.models import User
 from django.conf import settings
 
 
 class Advertisement(models.Model):
-    # class Meta:
-    #     abstract = True
+    class Meta:
+        abstract = True
 
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+    user_id = models.ForeignKey(
+        User,
         on_delete=models.CASCADE,
     )
 
@@ -45,7 +46,10 @@ class Bicycle(Advertisement):
     #     on_delete=models.CASCADE,
     #     related_name='bicycles'
     # )
-    advertisement = models.OneToOneField(Advertisement)
+
+    # advertisement = models.OneToOneField(Advertisement,
+    #                                      on_delete=models.CASCADE,
+    #                                      primary_key=True,)
 
     size = models.IntegerField()
 
@@ -66,11 +70,15 @@ class Bicycle(Advertisement):
 
 
 class Ski(Advertisement):
-    advertisement = models.ForeignKey(
-        Advertisement,
-        on_delete=models.CASCADE,
-        related_name='skis'
-    )
+    # advertisement = models.ForeignKey(
+    #     Advertisement,
+    #     on_delete=models.CASCADE,
+    #     related_name='skis'
+    # )
+
+    # advertisement = models.OneToOneField(Advertisement,
+    #                                      on_delete=models.CASCADE,
+    #                                      primary_key=True,)
 
     size = models.IntegerField()
     for_weight = models.IntegerField(blank = True,)
