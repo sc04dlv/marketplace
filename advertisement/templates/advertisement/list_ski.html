@@ -1,0 +1,36 @@
+{% extends 'main.html' %}
+
+{% block body %}
+
+{% if skis %}
+    <ul>
+    {% for ski in skis %}
+    <li><a href="/ski/{{ ski.id }}"> {{ ski.title }} </a></li>
+    <li><a href="/ski/{{ ski.id }}"> {{ ski.price }} p. </a></li>
+    <li><a href="/ski/{{ ski.id }}"> {{ ski.date }} </a></li>
+    <li><a href="/ski/{{ ski.id }}"> {{ ski.user }} </a></li>
+    <li></li>
+    {% endfor %}
+    </ul>
+    <li><a href="/advertisement/ski/new"> Добавить </a></li>
+{% else %}
+    <p>Объявлений не найдено</p>
+{% endif %}
+
+{% if skis.paginator.num_pages > 1 %}
+    {% if skis.has_previous %}
+        <a href="/advertisement/ski/page/{{ skis.previous_page_number }}/">&larr;</a>
+    {% endif %}
+    {% for page in skis.paginator.page_range %}
+      {% if page == skis.number %}
+        <li><a href="/advertisement/ski/page/{{page}}">{{page}}</a></li>
+      {% else %}
+        <li><a href="/advertisement/ski/page/{{page}}">{{page}}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if skis.has_next %}
+        <a href="/advertisement/ski/page/{{ skis.next_page_number }}">&rarr;</a>
+    {% endif %}
+{% endif %}
+
+{% endblock %}

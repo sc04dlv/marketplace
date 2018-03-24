@@ -1,0 +1,36 @@
+{% extends 'main.html' %}
+
+{% block body %}
+
+{% if bicycles %}
+    <ul>
+    {% for bicycle in bicycles %}
+    <li><a href="/bicycle/{{ bicycle.id }}"> {{ bicycle.title }} </a></li>
+    <li><a href="/bicycle/{{ bicycle.id }}"> {{ bicycle.price }} p. </a></li>
+    <li><a href="/bicycle/{{ bicycle.id }}"> {{ bicycle.date }} </a></li>
+    <li><a href="/bicycle/{{ bicycle.id }}"> {{ bicycle.user }} </a></li>
+    <li></li>
+    {% endfor %}
+    </ul>
+    <li><a href="/advertisement/bicycle/new"> Добавить </a></li>
+{% else %}
+    <p>Объявлений не найдено</p>
+{% endif %}
+
+{% if bicycles.paginator.num_pages > 1 %}
+    {% if bicycles.has_previous %}
+        <a href="/advertisement/bicycle/page/{{ bicycles.previous_page_number }}/">&larr;</a>
+    {% endif %}
+    {% for page in bicycles.paginator.page_range %}
+      {% if page == bicycles.number %}
+        <li><a href="/advertisement/bicycle/page/{{page}}">{{page}}</a></li>
+      {% else %}
+        <li><a href="/advertisement/bicycle/page/{{page}}">{{page}}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if bicycles.has_next %}
+        <a href="/advertisement/bicycle/page/{{ bicycles.next_page_number }}">&rarr;</a>
+    {% endif %}
+{% endif %}
+
+{% endblock %}

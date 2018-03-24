@@ -1,0 +1,18 @@
+{% extends 'main.html' %}
+
+{% block body %}
+
+{% if ski %}
+  <ul> Пользователь {{username}} </ul>
+  <ul> Название объявления {{ski.title}} </ul>
+  <ul> Текст объявления {{ski.note}} </ul>
+  <ul> Дата подачи объявления {{ski.date}} </ul>
+  <ul> Стоимость {{ski.price}} р. </ul>
+  <ul> Размер {{ski.size}} </ul>
+  <ul> Тип велосипеда {{ski.ski_type}} </ul>
+  <li><a href="/advertisement/ski/{{ski.id}}/edit"> Редактировать </a></li>
+  <li><a href="/advertisement"> Объявления </a></li>
+{% else %}
+    <p>No polls are available.</p>
+{% endif %}
+{% endblock %}
