@@ -4,8 +4,8 @@ from __future__ import unicode_literals
 
 from django.contrib import admin
 
-# from django.contrib.contenttypes.admin import GenericTabularInline
-from .models import Bicycle, Ski
+from .models import Bicycle, Ski, BicycleType, BicycleJumper, Image
+from django.contrib.contenttypes.admin import GenericTabularInline
 
 # class AdvertisementAdmin(admin.Advertisement):
 #     fields = ['title','note','price']
@@ -31,7 +31,24 @@ from .models import Bicycle, Ski
 
 
 # admin.site.register(Advertisement, AdvertisementBicycleAdmin)
-admin.site.register(Bicycle)
-admin.site.register(Ski)
+
+class ImageInline(GenericTabularInline):
+    model = Image
+
+class ImageAdmin(admin.ModelAdmin):
+    inlines = [
+        ImageInline,
+    ]
+
+admin.site.register(Bicycle, ImageAdmin)
+admin.site.register(Ski, ImageAdmin)
+
+
+# admin.site.register(Bicycle)
+# admin.site.register(Ski)
+
+admin.site.register(BicycleType)
+admin.site.register(BicycleJumper)
+
 
 # Register your models here.

@@ -3,15 +3,19 @@
 {% block body %}
 
 {% if bicycle %}
-  <ul> Пользователь {{username}} </ul>
+  <ul> Пользователь {{bicycle.user_id}} </ul>
   <ul> Название объявления {{bicycle.title}} </ul>
   <ul> Текст объявления {{bicycle.note}} </ul>
   <ul> Дата подачи объявления {{bicycle.date}} </ul>
   <ul> Стоимость {{bicycle.price}} р. </ul>
   <ul> Размер {{bicycle.size}} </ul>
   <ul> Тип велосипеда {{bicycle.bicycle_type}} </ul>
-  <li><a href="/advertisement/bicycle/{{bicycle.id}}/edit"> Редактировать </a></li>
-  <li><a href="/advertisement"> Объявления </a></li>
+  <ul> Переключатель передний {{bicycle.jumper_front}} </ul>
+  <ul> Переключатель задний {{bicycle.jumper_back}} </ul>
+  {% if bicycle.user_id.id == user.id %}
+    <li><a href="/bicycle/{{bicycle.id}}/edit"> Редактировать </a></li>
+  {% endif %}
+  <li><a href="/"> Объявления </a></li>
 {% else %}
     <p>No polls are available.</p>
 {% endif %}

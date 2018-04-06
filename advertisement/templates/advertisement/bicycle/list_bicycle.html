@@ -1,0 +1,83 @@
+{% extends 'main.html' %}
+
+
+{% block filter %}
+
+{% load bootstrap4 %}
+{% bootstrap_css %}
+  <form class="well" action="{% url 'bicycles' %}" method="get" >
+    <div class="modal-body">
+      <!-- {{ filter_form.price_min.errors }}
+      {{ filter_form.price_min.label_tag }}
+      {{ filter_form.price_min }}
+
+      {{ filter_form.price_max.errors }}
+      {{ filter_form.price_max.label_tag }}
+      {{ filter_form.price_max }}
+
+      <p>Вес</p>
+      {{ filter_form.weight_min.errors }}
+      {{ filter_form.weight_min.label_tag }}
+      {{ filter_form.weight_min }}
+
+      {{ filter_form.weight_max.errors }}
+      {{ filter_form.weight_max.label_tag }}
+      {{ filter_form.weight_max }} -->
+
+      {{ filter_form.as_p }}
+    </div>
+    <div class="modal-footer-left">
+      <button type="submit" class="btn btn-primary"> Применить </button>
+    </div>
+  </form>
+
+{% endblock %}
+
+{% block body %}
+
+{% if bicycles %}
+    <ul class="list-group">
+    {% for bicycle in bicycles %}
+      <a class="list-group-item list-group-item-action" href="/bicycle/{{ bicycle.id }}">
+        {{ bicycle.title }}
+        {{ bicycle.price }} p.
+      </a>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>Объявлений не найдено</p>
+{% endif %}
+
+<nav aria-label="...">
+  <ul class="pagination">
+    {% if bicycles.paginator.num_pages > 1 %}
+        {% if bicycles.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="/bicycle/page/{{ bicycles.previous_page_number }}/">&larr;</a>
+          </li>
+        {% else %}
+          <li class="page-item disabled">
+            <a class="page-link" href="#">&larr;</a>
+          </li>
+        {% endif %}
+        {% for page in bicycles.paginator.page_range %}
+          {% if page == bicycles.number %}
+            <li class="page-item"><a class="page-link" href="/bicycle/page/{{page}}">{{page}}</a></li>
+          {% else %}
+            <li class="page-item"><a class="page-link" href="/bicycle/page/{{page}}">{{page}}</a></li>
+          {% endif %}
+        {% endfor %}
+        {% if bicycles.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="/bicycle/page/{{ bicycles.next_page_number }}">&rarr;</a>
+          </li>
+        {% else %}
+          <li class="page-item disabled">
+            <a class="page-link" href="#">&rarr;</a>
+          </li>
+        {% endif %}
+    {% endif %}
+  </ul>
+</nav>
+
+{% endblock %}

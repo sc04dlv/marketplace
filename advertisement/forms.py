@@ -1,20 +1,68 @@
-from django import forms
-from .models import Bicycle, Ski
-#
-# class NameForm(forms.ModelForm):
-#     class Meta:
-#         model = Advertisement
-#         fields = ['title', 'note', 'price']
+# -*- coding: utf-8 -*-
 
+from django import forms
+from .models import Bicycle, Ski, BicycleType, BicycleJumper
+from django.forms import Textarea
+from django.forms import modelformset_factory
 
 
 class BicycleForm(forms.ModelForm):
     class Meta:
         model = Bicycle
-        fields = ['title', 'note', 'price', 'ident', 'year', 'size', 'weight', 'bicycle_type']
+        # fields = ['title', 'note', 'price', 'ident', 'year', 'size', 'weight', 'bicycle_type']
+        fields = '__all__' #exclude = []
+        widgets = {
+            'note': Textarea(attrs={'cols': 80, 'rows': 10}),
+        }
 
 
 class SkiForm(forms.ModelForm):
     class Meta:
         model = Ski
-        fields = ['title', 'note', 'price', 'ident', 'year', 'size', 'weight', 'for_weight', 'ski_type']
+        fields = '__all__'
+        widgets = {
+            'note': Textarea(attrs={'cols': 80, 'rows': 10}),
+        }
+
+
+class BaseFilterForm(forms.Form):
+    price_min   = forms.IntegerField(label="Цена с"  ,required=False)
+    price_max   = forms.IntegerField(label="Цена по"  ,required=False)
+
+    weight_min  = forms.IntegerField(label="Вес с" ,required=False)
+    weight_max  = forms.IntegerField(label="Вес по" ,required=False)
+
+    # title_like  = forms.CharField(label="title_like"    ,required=False)
+    # note_like   = forms.CharField(label="note_like"     ,required=False)
+    # date_min    = forms.DateTimeField(label="date_min"  ,required=False)
+    # date_max    = forms.DateTimeField(label="date_max"  ,required=False)
+    # year_min    = forms.IntegerField(label="year_min"   ,required=False)
+    # year_max    = forms.IntegerField(label="year_max"   ,required=False)
+
+class BicycleFilterForm(BaseFilterForm):
+    # bicycle_type = forms.CharField(label="bicycle_type" ,required=False)
+    bicycle_type = forms.ModelMultipleChoiceField(queryset=BicycleType.objects.all(),
+                                                  required=False,
+                                                  widget=forms.CheckboxSelectMultiple,
+                                                  label="Тип велосипеда",)
+    jumper_front = forms.ModelMultipleChoiceField(queryset=BicycleJumper.objects.all(),
+                                                  required=False,
+                                                  widget=forms.CheckboxSelectMultiple,
+                                                  label="Переключатель передний",)
+    jumper_back =  forms.ModelMultipleChoiceField(queryset=BicycleJumper.objects.all(),
+                                                  required=False,
+                                                  widget=forms.CheckboxSelectMultiple,
+                                                  label="Переключатель задний",) #(attrs={'class': 'form-control'}),)
+
+
+
+
+# class BicycleFilterForm_Test(forms.ModelForm):
+#     price_min   = forms.IntegerField(label="price_min"  ,required=False)
+#     price_max   = forms.IntegerField(label="price_max"  ,required=False)
+#     weight_min  = forms.IntegerField(label="weight_min" ,required=False)
+#     weight_max  = forms.IntegerField(label="weight_max" ,required=False)
+#
+#     class Meta:
+#         model = Bicycle
+#         fields = ['bicycle_type']

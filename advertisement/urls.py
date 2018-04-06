@@ -24,5 +24,5 @@ urlpatterns = [
   url(r'^ski/(?P<ski_id>[0-9]+)/$'                  ,views.view_ski     ,name='view_ski'),
   url(r'^ski/(?P<ski_id>[0-9]+)/edit/$'             ,views.edit_ski     ,name='edit_ski'),
 
-  url(r'^$'                                         ,views.bicycles     ,name='bicycles'),
+  url(r'^$'                                         ,views.categories   ,name='categories'),
 ]
