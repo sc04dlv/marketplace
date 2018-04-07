@@ -29,10 +29,9 @@ class BicycleJumper(models.Model):
 
 
 class Advertisement(models.Model):
-    # class Meta:
-    #     abstract = True
-
-    # images = GenericRelation(Image)
+    class Meta:
+        verbose_name = 'Объявление'
+        verbose_name_plural = 'Объявления'
 
     user = models.ForeignKey(
         User,
@@ -70,15 +69,16 @@ class Image(models.Model):
     advertisement = models.ForeignKey(
         Advertisement,
         on_delete=models.CASCADE,
-        related_name='images'
+        related_name='images' #/%Y/%m/%d')
     )
 
     image = models.ImageField(upload_to="media/image")
 
 
-
-
 class Bicycle(Advertisement):
+    # class Meta(Advertisement.Meta):
+    #     verbose_name = test''
+
     size = models.IntegerField()
 
     # bicycle_types = (

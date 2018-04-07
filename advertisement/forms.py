@@ -1,28 +1,35 @@
 # -*- coding: utf-8 -*-
 
 from django import forms
-from .models import Bicycle, Ski, BicycleType, BicycleJumper
+from .models import Advertisement, Bicycle, Ski, BicycleType, BicycleJumper, Image
 from django.forms import Textarea
 from django.forms import modelformset_factory
+from django.forms.models import inlineformset_factory
 
+ImageFormset = inlineformset_factory(Advertisement, Image, fields = '__all__')
 
-class BicycleForm(forms.ModelForm):
+class AdvertisementForm(forms.ModelForm):
     class Meta:
-        model = Bicycle
-        # fields = ['title', 'note', 'price', 'ident', 'year', 'size', 'weight', 'bicycle_type']
-        fields = '__all__' #exclude = []
-        widgets = {
-            'note': Textarea(attrs={'cols': 80, 'rows': 10}),
-        }
-
-
-class SkiForm(forms.ModelForm):
-    class Meta:
-        model = Ski
+        model = Advertisement
         fields = '__all__'
         widgets = {
             'note': Textarea(attrs={'cols': 80, 'rows': 10}),
         }
+
+
+class BicycleForm(forms.ModelForm):
+    class Meta(AdvertisementForm.Meta):
+        model = Bicycle
+
+
+
+class SkiForm(forms.ModelForm):
+    class Meta(AdvertisementForm.Meta):
+        model = Ski
+        # fields = '__all__'
+        # widgets = {
+        #     'note': Textarea(attrs={'cols': 80, 'rows': 10}),
+        # }
 
 
 class BaseFilterForm(forms.Form):

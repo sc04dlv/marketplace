@@ -42,10 +42,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'bootstrap4',
-
     'marketplace',
     'advertisement',
     'user',
+
+    # 'django_file_form',
+    # 'django_file_form.ajaxuploader',
 ]
 
 MIDDLEWARE = [

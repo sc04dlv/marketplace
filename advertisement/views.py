@@ -12,12 +12,11 @@ from django.contrib import auth
 from django.core.paginator import Paginator
 from django.contrib.contenttypes.models import ContentType
 
-
 import urlparse
 import urllib
 
-from .models import Bicycle, Ski
-from .forms import BicycleForm, SkiForm, BaseFilterForm, BicycleFilterForm
+from .models import Bicycle, Ski, Image
+from .forms import BicycleForm, SkiForm, BaseFilterForm, BicycleFilterForm, ImageFormset
 
 # class AdvListView(generic.ListView):
 #   template_name = 'advertisement/index.html'
@@ -75,15 +74,25 @@ def new_bicycle(request):
     args = {}
     if not request.user.is_authenticated():
         return render(request, 'user/login_error.html')
+
+
     if request.method == 'POST':
         form = BicycleForm(request.POST)
-        if form.is_valid() :
+        # form_image = ImageFormset(request.FILES)
+        if form.is_valid(): # and form_image.is_valid() :
+            # image = form_image.save()
+            # form.instance = image
+            # form.instance.user = User.objects.get(id=request.user.id)
+            # form.save()
+
+
             bicycle = form.save(commit=False)
             bicycle.user = User.objects.get(id=request.user.id)
             bicycle.save()
             return redirect('view_bicycle', bicycle_id=bicycle.pk)
     else:
         args['form'] = BicycleForm()
+        # args['form_image'] = ImageFormset()
         args['username'] = request.user.username
         return render(request, 'advertisement/bicycle/new_bicycle.html', args )
 

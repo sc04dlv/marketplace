@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 
 from . import views
 
@@ -14,7 +14,7 @@ urlpatterns = [
 
   url(r'^bicycle/$'                                 ,views.bicycles     ,name='bicycles'),
   url(r'^bicycle/page/(?P<page_number>[0-9]+)/$'    ,views.bicycles     ,name='bicycles'),
-  url(r'^bicycle/new/$'                             ,views.new_bicycle  ,name='new_bicycle'),
+  url(r'^bicycle/new/$'                             ,views.new_bicycle  ,name='new_bicycle',),
   url(r'^bicycle/(?P<bicycle_id>[0-9]+)/$'          ,views.view_bicycle ,name='view_bicycle'),
   url(r'^bicycle/(?P<bicycle_id>[0-9]+)/edit/$'     ,views.edit_bicycle ,name='edit_bicycle'),
 
