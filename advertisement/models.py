@@ -5,9 +5,9 @@ from django.db import models
 # from django.contrib.auth.models.User import User
 from django.contrib.auth.models import User
 from django.conf import settings
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.fields import GenericRelation
+# from django.contrib.contenttypes.models import ContentType
+# from django.contrib.contenttypes.fields import GenericForeignKey
+# from django.contrib.contenttypes.fields import GenericRelation
 
 class BicycleType(models.Model):
     code = models.CharField(max_length=20,)
@@ -27,20 +27,14 @@ class BicycleJumper(models.Model):
           self.name,
       ])
 
-class Image(models.Model):
-    image = models.ImageField(upload_to="media/image")
-
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey("content_type", "object_id")
 
 class Advertisement(models.Model):
-    class Meta:
-        abstract = True
+    # class Meta:
+    #     abstract = True
 
-    images = GenericRelation(Image)
+    # images = GenericRelation(Image)
 
-    user_id = models.ForeignKey(
+    user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         editable=False,
@@ -72,19 +66,19 @@ class Advertisement(models.Model):
       ])
 
 
+class Image(models.Model):
+    advertisement = models.ForeignKey(
+        Advertisement,
+        on_delete=models.CASCADE,
+        related_name='images'
+    )
+
+    image = models.ImageField(upload_to="media/image")
+
+
 
 
 class Bicycle(Advertisement):
-    # advertisement = models.ForeignKey(
-    #     Advertisement,
-    #     on_delete=models.CASCADE,
-    #     related_name='bicycles'
-    # )
-
-    # advertisement = models.OneToOneField(Advertisement,
-    #                                      on_delete=models.CASCADE,
-    #                                      primary_key=True,)
-
     size = models.IntegerField()
 
     # bicycle_types = (

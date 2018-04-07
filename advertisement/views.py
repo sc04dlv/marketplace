@@ -10,6 +10,8 @@ from django.contrib.auth.models import User
 from django.views import generic
 from django.contrib import auth
 from django.core.paginator import Paginator
+from django.contrib.contenttypes.models import ContentType
+
 
 import urlparse
 import urllib
@@ -30,34 +32,20 @@ from .forms import BicycleForm, SkiForm, BaseFilterForm, BicycleFilterForm
 #     template_name = 'advertisement/view.html'
 #     context_object_name = 'latest_advertisement_list'
 
-# return HttpResponse("<html>%s - %s</html>" %(str(User.objects.get(id=request.user.id)) ,str(bicycle.user_id)))
+# return HttpResponse("<html>%s - %s</html>" %(str(User.objects.get(id=request.user.id)) ,str(bicycle.user)))
 
 def categories(request):
     return render(request, 'advertisement/categories.html')
+
 
 ####### BICYCLE ######
 def bicycles(request, page_number=1):
     args = {}
     bicycles = Bicycle.objects.order_by('-date')
     filter_form = BicycleFilterForm(request.GET)
+
     # отфильтровываем данные из запроса
     if filter_form.is_valid():
-        # q = QueryDict(request.META['QUERY_STRING'], mutable=True) # признак изменяемости экземпляра
-        # q = QueryDict('jumper_front=1&jumper_front=2&jumper_front=3', mutable=True)
-        # if  q.__contains__('jumper_front'):
-
-        # return HttpResponse("<html>%s</html>" % request.GET.getlist("jumper_front"))# q.getlist('jumper_front'))
-            #values()  -- возвращает количество значений параметров
-            #getlist, pop -- [u'1', u'2', u'3', u'4', u'5']
-
-            #QueryDict.urlencode())
-            #request.GET.getlist("jumper_front")   # [u'1', u'2', u'3', u'4', u'5']
-            #request.META['QUERY_STRING']  #price_min=&price_max=&weight_min=&weight_max=&jumper_front=1&jumper_front=2&jumper_front=3&jumper_front=4&jumper_front=5
-
-            # q = QueryDict(request.META['QUERY_STRING'], mutable=True)
-            # q.pop('jumper_front')   #[u'1', u'2', u'3', u'4', u'5']
-
-
         if filter_form.cleaned_data["price_min"]:
             bicycles = bicycles.filter(price__gte=filter_form.cleaned_data["price_min"])
         if filter_form.cleaned_data["price_max"]:
@@ -89,9 +77,9 @@ def new_bicycle(request):
         return render(request, 'user/login_error.html')
     if request.method == 'POST':
         form = BicycleForm(request.POST)
-        if form.is_valid():
+        if form.is_valid() :
             bicycle = form.save(commit=False)
-            bicycle.user_id = User.objects.get(id=request.user.id)
+            bicycle.user = User.objects.get(id=request.user.id)
             bicycle.save()
             return redirect('view_bicycle', bicycle_id=bicycle.pk)
     else:
@@ -114,7 +102,7 @@ def edit_bicycle(request, bicycle_id):
         form = BicycleForm(request.POST)
         if form.is_valid():
             bicycle = form.save(commit=False)
-            bicycle.user_id = User.objects.get(id=request.user.id)
+            bicycle.user = User.objects.get(id=request.user.id)
             bicycle.id = bicycle_id
             bicycle.save( update_fields=['title', 'note', 'price', 'ident', 'year', 'size',
                                          'weight', 'bicycle_type', 'jumper_front', 'jumper_back'],
@@ -124,7 +112,7 @@ def edit_bicycle(request, bicycle_id):
         bicycle = Bicycle.objects.get(id=bicycle_id)
 
         # проверяем права на редактирование
-        if not User.objects.get(id=request.user.id) == bicycle.user_id:
+        if not User.objects.get(id=request.user.id) == bicycle.user:
             return redirect('view_bicycle', bicycle_id=bicycle_id)
         args['form'] = BicycleForm(instance=bicycle)
         args['bicycle_id'] = bicycle_id
@@ -149,7 +137,7 @@ def new_ski(request):
         if form.is_valid():
             ski = form.save(commit=False)
             ski.ident = 123
-            ski.user_id = User.objects.get(id=request.user.id) #auth.get_user(request).id
+            ski.user = User.objects.get(id=request.user.id) #auth.get_user(request).id
             ski.save()
             return redirect('view_ski', ski_id=ski.pk)
     else:
@@ -172,7 +160,7 @@ def edit_ski(request, ski_id):
         if form.is_valid():
             ski = form.save(commit=False)
             ski.ident = 123
-            ski.user_id = User.objects.get(id=request.user.id)
+            ski.user = User.objects.get(id=request.user.id)
             ski.id = ski_id
             ski.save( update_fields=['title', 'note', 'price', 'ident', 'year', 'size', 'weight', 'for_weight', 'ski_type'],
                           force_update='True')
