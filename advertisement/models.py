@@ -8,6 +8,7 @@ from django.conf import settings
 # from django.contrib.contenttypes.models import ContentType
 # from django.contrib.contenttypes.fields import GenericForeignKey
 # from django.contrib.contenttypes.fields import GenericRelation
+import datetime
 
 class BicycleType(models.Model):
     code = models.CharField(max_length=20,)
@@ -64,15 +65,23 @@ class Advertisement(models.Model):
           # self.price,
       ])
 
+def get_image_filename(instance, filename):
+    # title = instance.advertisement.id
+    # slug = slugify(title)
+    now = datetime.datetime.now()
+    str(now)
+    slug = instance.advertisement.id
+    return "images/%s/%s/%s/%s-%s" % (now.year, now.month, now.day, slug, filename)
 
-class Image(models.Model):
+class Images(models.Model):
     advertisement = models.ForeignKey(
         Advertisement,
         on_delete=models.CASCADE,
-        related_name='images' #/%Y/%m/%d')
+        # related_name='images' #/%Y/%m/%d'
     )
 
-    image = models.ImageField(upload_to="media/image")
+    image = models.ImageField(upload_to=get_image_filename, #'media/image',
+                              verbose_name='Image',)
 
 
 class Bicycle(Advertisement):

@@ -1,12 +1,20 @@
 # -*- coding: utf-8 -*-
 
 from django import forms
-from .models import Advertisement, Bicycle, Ski, BicycleType, BicycleJumper, Image
+from .models import Advertisement, Bicycle, Ski, BicycleType, BicycleJumper, Images
 from django.forms import Textarea
 from django.forms import modelformset_factory
 from django.forms.models import inlineformset_factory
 
-ImageFormset = inlineformset_factory(Advertisement, Image, fields = '__all__')
+class ImageForm(forms.ModelForm):
+    image = forms.ImageField(label='Image')
+    class Meta:
+        model = Images
+        fields = ('image', )
+
+ImageFormSet = modelformset_factory(Images, form=ImageForm, extra=3)
+# ImageFormset = inlineformset_factory(Advertisement, Images, fields = '__all__')
+
 
 class AdvertisementForm(forms.ModelForm):
     class Meta:
@@ -22,14 +30,9 @@ class BicycleForm(forms.ModelForm):
         model = Bicycle
 
 
-
 class SkiForm(forms.ModelForm):
     class Meta(AdvertisementForm.Meta):
         model = Ski
-        # fields = '__all__'
-        # widgets = {
-        #     'note': Textarea(attrs={'cols': 80, 'rows': 10}),
-        # }
 
 
 class BaseFilterForm(forms.Form):

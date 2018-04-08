@@ -12,10 +12,15 @@
   <ul> Тип велосипеда {{bicycle.bicycle_type}} </ul>
   <ul> Переключатель передний {{bicycle.jumper_front}} </ul>
   <ul> Переключатель задний {{bicycle.jumper_back}} </ul>
-  {% if bicycle.user_id.id == user.id %}
-    <li><a href="/bicycle/{{bicycle.id}}/edit"> Редактировать </a></li>
+  {% for image in images %}
+      <img src="/media/{{image.image}}">
+  {% endfor %}
+
+  {% if bicycle.user_id == user.id %}
+    <li><a href="{% url 'delete_bicycle' bicycle.id %}"> Удалить </a></li>
+    <li><a href="{% url 'edit_bicycle' bicycle.id %}"> Редактировать </a></li>
   {% endif %}
-  <li><a href="/"> Объявления </a></li>
+  <li><a href="{% url 'categories' %}"> Объявления </a></li>
 {% else %}
     <p>No polls are available.</p>
 {% endif %}

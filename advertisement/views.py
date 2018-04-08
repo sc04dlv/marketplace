@@ -2,7 +2,7 @@
 
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, render_to_response, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 # from django.http import HttpResponseRedirect
 from django.http import QueryDict
 
@@ -15,8 +15,8 @@ from django.contrib.contenttypes.models import ContentType
 import urlparse
 import urllib
 
-from .models import Bicycle, Ski, Image
-from .forms import BicycleForm, SkiForm, BaseFilterForm, BicycleFilterForm, ImageFormset
+from .models import Bicycle, Ski, Images
+from .forms import BicycleForm, SkiForm, BaseFilterForm, BicycleFilterForm, ImageFormSet
 
 # class AdvListView(generic.ListView):
 #   template_name = 'advertisement/index.html'
@@ -64,41 +64,77 @@ def bicycles(request, page_number=1):
         if filter_form.cleaned_data["jumper_back"]:
             bicycles = bicycles.filter(jumper_back__in=request.GET.getlist("jumper_back"))
 
-    current_page = Paginator(bicycles, 3)
+    current_page = Paginator(bicycles, 5)
     args['bicycles'] = current_page.page(page_number)
     args['filter_form'] = filter_form
     return render(request, 'advertisement/bicycle/list_bicycle.html', args )
 
+# def new_bicycle(request):
+#     # @login_required
+#     args = {}
+#     if not request.user.is_authenticated():
+#         return render(request, 'user/login_error.html')
+#
+#
+#     if request.method == 'POST':
+#         form = BicycleForm(request.POST)
+#         # form_image = ImageFormset(request.FILES)
+#         if form.is_valid(): # and form_image.is_valid() :
+#             # image = form_image.save()
+#             # form.instance = image
+#             # form.instance.user = User.objects.get(id=request.user.id)
+#             # form.save()
+#
+#
+#             bicycle = form.save(commit=False)
+#             bicycle.user = User.objects.get(id=request.user.id)
+#             bicycle.save()
+#             return redirect('view_bicycle', bicycle_id=bicycle.pk)
+#     else:
+#         args['form'] = BicycleForm()
+#         # args['form_image'] = ImageFormset()
+#         args['username'] = request.user.username
+#         return render(request, 'advertisement/bicycle/new_bicycle.html', args )
+
 def new_bicycle(request):
-    # @login_required
-    args = {}
     if not request.user.is_authenticated():
         return render(request, 'user/login_error.html')
-
-
+    args = {}
     if request.method == 'POST':
-        form = BicycleForm(request.POST)
-        # form_image = ImageFormset(request.FILES)
-        if form.is_valid(): # and form_image.is_valid() :
-            # image = form_image.save()
-            # form.instance = image
-            # form.instance.user = User.objects.get(id=request.user.id)
-            # form.save()
+        formBicycle = BicycleForm(request.POST)
+        formSet = ImageFormSet(request.POST, request.FILES,
+                               queryset=Images.objects.none())
 
-
-            bicycle = form.save(commit=False)
-            bicycle.user = User.objects.get(id=request.user.id)
+        if formBicycle.is_valid() and formSet.is_valid():
+            bicycle = formBicycle.save(commit=False)
+            bicycle.user = request.user
             bicycle.save()
+
+            for form in formSet.cleaned_data:
+                image = form['image']
+                photo = Images(advertisement=bicycle, image=image)
+                photo.save()
+            # messages.success(request,
+            #                  "Yeeew,check it out on the home page!")
             return redirect('view_bicycle', bicycle_id=bicycle.pk)
+        else:
+            print formBicycle.errors, formSet.errors
     else:
-        args['form'] = BicycleForm()
-        # args['form_image'] = ImageFormset()
+        formBicycle = BicycleForm()
+        formSet = ImageFormSet(queryset=Images.objects.none())
+    # return render(request, 'index.html',
+    #               {'form': form, 'formSet': formSet},
+    #               context_instance=RequestContext(request))
+        args['form'] = formBicycle
+        args['formset'] = formSet
         args['username'] = request.user.username
-        return render(request, 'advertisement/bicycle/new_bicycle.html', args )
+    return render(request, 'advertisement/bicycle/new_bicycle.html', args )
+
 
 def view_bicycle(request, bicycle_id):
     args = {}
     args['bicycle'] = get_object_or_404(Bicycle, id=bicycle_id)
+    args['images'] = Images.objects.filter(advertisement = bicycle_id)
     args['username'] = request.user.username
     return render(request, 'advertisement/bicycle/view_bicycle.html', args)
 
@@ -127,6 +163,15 @@ def edit_bicycle(request, bicycle_id):
         args['bicycle_id'] = bicycle_id
         args['username'] = request.user.username #auth.get_user(request).username
         return render(request, 'advertisement/bicycle/edit_bicycle.html', args )
+
+def delete_bicycle(request, bicycle_id):
+    bicycle = Bicycle.objects.get(id=bicycle_id)
+    # проверяем права на удаление
+    if not User.objects.get(id=request.user.id) == bicycle.user:
+        return redirect('view_bicycle', bicycle_id=bicycle_id)
+    else:
+        bicycle.delete()
+        return redirect('bicycles')
 
 ####### SKI ######
 def skis(request, page_number=1):

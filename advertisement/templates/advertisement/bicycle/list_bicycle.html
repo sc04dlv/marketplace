@@ -38,10 +38,10 @@
 {% if bicycles %}
     <ul class="list-group">
     {% for bicycle in bicycles %}
-      <a class="list-group-item list-group-item-action" href="/bicycle/{{ bicycle.id }}">
+      <a class="list-group-item list-group-item-action" href="{% url 'view_bicycle' bicycle.id %}">
         {{ bicycle.title }}
         {{ bicycle.price }} p.
-        {{ bicycle.user }}
+        {{ bicycle.date }}
       </a>
     {% endfor %}
     </ul>
@@ -54,7 +54,7 @@
     {% if bicycles.paginator.num_pages > 1 %}
         {% if bicycles.has_previous %}
           <li class="page-item">
-            <a class="page-link" href="/bicycle/page/{{ bicycles.previous_page_number }}/">&larr;</a>
+            <a class="page-link" href="{% url 'bicycles' bicycles.previous_page_number %}">&larr;</a>
           </li>
         {% else %}
           <li class="page-item disabled">
@@ -63,14 +63,14 @@
         {% endif %}
         {% for page in bicycles.paginator.page_range %}
           {% if page == bicycles.number %}
-            <li class="page-item"><a class="page-link" href="/bicycle/page/{{page}}">{{page}}</a></li>
+            <li class="page-item"><a class="page-link" href="{% url 'bicycles' page %}">{{page}}</a></li>
           {% else %}
-            <li class="page-item"><a class="page-link" href="/bicycle/page/{{page}}">{{page}}</a></li>
+            <li class="page-item"><a class="page-link" href="{% url 'bicycles' page %}">{{page}}</a></li>
           {% endif %}
         {% endfor %}
         {% if bicycles.has_next %}
           <li class="page-item">
-            <a class="page-link" href="/bicycle/page/{{ bicycles.next_page_number }}">&rarr;</a>
+            <a class="page-link" href="{% url 'bicycles' bicycles.next_page_number %}">&rarr;</a>
           </li>
         {% else %}
           <li class="page-item disabled">

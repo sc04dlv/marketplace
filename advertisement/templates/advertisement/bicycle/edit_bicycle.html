@@ -1,7 +1,7 @@
 {% extends 'main.html' %}
 
 {% block body %}
-<form action="/bicycle/{{ bicycle_id }}/edit/" method="post">
+<form action="{% url 'edit_bicycle' bicycle_id %}" method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <input type="submit" value="Submit" />

@@ -2,9 +2,12 @@
 
 {% block body %}
 
-<form action="{% url 'new_bicycle' %}" method="post">
+<form enctype="multipart/form-data" action="{% url 'new_bicycle' %}" method="post" id="post_form">
     {% csrf_token %}
+
     {{ form.as_p }}
-    <input type="submit" value="Submit" />
+    {{ formset.as_p }}
+
+    <input type="submit" name="submit" value="Submit" />
 </form>
 {% endblock %}

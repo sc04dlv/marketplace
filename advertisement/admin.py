@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 from django.contrib import admin
 
-from .models import Bicycle, Ski, BicycleType, BicycleJumper, Image
+from .models import Bicycle, Ski, BicycleType, BicycleJumper, Images
 # from django.contrib.contenttypes.admin import GenericTabularInline
 
 # class AdvertisementAdmin(admin.Advertisement):
@@ -32,13 +32,13 @@ from .models import Bicycle, Ski, BicycleType, BicycleJumper, Image
 
 # admin.site.register(Advertisement, AdvertisementBicycleAdmin)
 
-class ImageInline(admin.TabularInline):
-    model = Image
+class ImagesInline(admin.TabularInline):
+    model = Images
     extra = 1
-    
+
 class BicycleAdmin(admin.ModelAdmin):
     inlines = [
-        ImageInline,
+        ImagesInline,
     ]
 
 admin.site.register(Bicycle, BicycleAdmin)
