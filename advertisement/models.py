@@ -5,10 +5,12 @@ from django.db import models
 # from django.contrib.auth.models.User import User
 from django.contrib.auth.models import User
 from django.conf import settings
+from PIL import Image
 # from django.contrib.contenttypes.models import ContentType
 # from django.contrib.contenttypes.fields import GenericForeignKey
 # from django.contrib.contenttypes.fields import GenericRelation
 import datetime
+
 
 class BicycleType(models.Model):
     code = models.CharField(max_length=20,)
@@ -82,6 +84,35 @@ class Images(models.Model):
 
     image = models.ImageField(upload_to=get_image_filename, #'media/image',
                               verbose_name='Image',)
+
+
+
+    def resize_image(self
+                    ,width=None
+                    ,height=None):
+        original_image = Image.open(self.image)#input_image_path)
+        w, h = original_image.size
+        # print('The original image size is {wide} wide x {height} '
+        #       'high'.format(wide=w, height=h))
+
+        if width and height:
+            max_size = (width, height)
+        elif width:
+            max_size = (width, h)
+        elif height:
+            max_size = (w, height)
+        else:
+            # No width or height specified
+            raise RuntimeError('Width or height required!')
+
+        original_image.thumbnail(max_size, Image.ANTIALIAS)
+        original_image.save('images/2018/4/8/test.jpg')#output_image_path)
+
+        scaled_image = Image.open('images/2018/4/8/test.jpg')#output_image_path)
+        width, height = scaled_image.size
+        print('The scaled image size is {wide} wide x {height} '
+              'high'.format(wide=width, height=height))
+
 
 
 class Bicycle(Advertisement):

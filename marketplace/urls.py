@@ -23,7 +23,7 @@ urlpatterns = [
     url(r'^user/', include('user.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^advertisement/', include('advertisement.urls')),
-    url(r'^$', include('advertisement.urls')),
+    url(r'^', include('advertisement.urls')),
 ]
 
 

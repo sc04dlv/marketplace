@@ -12,6 +12,8 @@ from django.contrib import auth
 from django.core.paginator import Paginator
 from django.contrib.contenttypes.models import ContentType
 
+from PIL import Image
+
 import urlparse
 import urllib
 
@@ -69,32 +71,6 @@ def bicycles(request, page_number=1):
     args['filter_form'] = filter_form
     return render(request, 'advertisement/bicycle/list_bicycle.html', args )
 
-# def new_bicycle(request):
-#     # @login_required
-#     args = {}
-#     if not request.user.is_authenticated():
-#         return render(request, 'user/login_error.html')
-#
-#
-#     if request.method == 'POST':
-#         form = BicycleForm(request.POST)
-#         # form_image = ImageFormset(request.FILES)
-#         if form.is_valid(): # and form_image.is_valid() :
-#             # image = form_image.save()
-#             # form.instance = image
-#             # form.instance.user = User.objects.get(id=request.user.id)
-#             # form.save()
-#
-#
-#             bicycle = form.save(commit=False)
-#             bicycle.user = User.objects.get(id=request.user.id)
-#             bicycle.save()
-#             return redirect('view_bicycle', bicycle_id=bicycle.pk)
-#     else:
-#         args['form'] = BicycleForm()
-#         # args['form_image'] = ImageFormset()
-#         args['username'] = request.user.username
-#         return render(request, 'advertisement/bicycle/new_bicycle.html', args )
 
 def new_bicycle(request):
     if not request.user.is_authenticated():
@@ -114,17 +90,14 @@ def new_bicycle(request):
                 image = form['image']
                 photo = Images(advertisement=bicycle, image=image)
                 photo.save()
-            # messages.success(request,
-            #                  "Yeeew,check it out on the home page!")
+
             return redirect('view_bicycle', bicycle_id=bicycle.pk)
         else:
             print formBicycle.errors, formSet.errors
     else:
         formBicycle = BicycleForm()
         formSet = ImageFormSet(queryset=Images.objects.none())
-    # return render(request, 'index.html',
-    #               {'form': form, 'formSet': formSet},
-    #               context_instance=RequestContext(request))
+
         args['form'] = formBicycle
         args['formset'] = formSet
         args['username'] = request.user.username
@@ -135,6 +108,11 @@ def view_bicycle(request, bicycle_id):
     args = {}
     args['bicycle'] = get_object_or_404(Bicycle, id=bicycle_id)
     args['images'] = Images.objects.filter(advertisement = bicycle_id)
+    # for image in args['images']:
+    #     img=Image.open(image.image)
+    #     image.resize_image(100,100)
+        # img.show() -- открывает изображение в новом окне
+
     args['username'] = request.user.username
     return render(request, 'advertisement/bicycle/view_bicycle.html', args)
 

@@ -3,7 +3,7 @@
 {% block body %}
 
 {% if bicycle %}
-  <ul> Пользователь {{bicycle.user_id}} </ul>
+  <ul> Пользователь {{bicycle.user}} </ul>
   <ul> Название объявления {{bicycle.title}} </ul>
   <ul> Текст объявления {{bicycle.note}} </ul>
   <ul> Дата подачи объявления {{bicycle.date}} </ul>
@@ -12,9 +12,14 @@
   <ul> Тип велосипеда {{bicycle.bicycle_type}} </ul>
   <ul> Переключатель передний {{bicycle.jumper_front}} </ul>
   <ul> Переключатель задний {{bicycle.jumper_back}} </ul>
+
+  <div class="container">
   {% for image in images %}
+    <div class="row">
       <img src="/media/{{image.image}}">
+    </div>
   {% endfor %}
+  </div>
 
   {% if bicycle.user_id == user.id %}
     <li><a href="{% url 'delete_bicycle' bicycle.id %}"> Удалить </a></li>
@@ -25,3 +30,29 @@
     <p>No polls are available.</p>
 {% endif %}
 {% endblock %}
+
+
+<!-- <div class="container">
+  <div class="row">
+    <a href="https://unsplash.it/1200/768.jpg?image=251" data-toggle="lightbox" data-gallery="gallery" class="col-md-4">
+      <img src="https://unsplash.it/600.jpg?image=251" class="img-fluid rounded">
+    </a>
+    <a href="https://unsplash.it/1200/768.jpg?image=252" data-toggle="lightbox" data-gallery="gallery" class="col-md-4">
+      <img src="https://unsplash.it/600.jpg?image=252" class="img-fluid rounded">
+    </a>
+    <a href="https://unsplash.it/1200/768.jpg?image=253" data-toggle="lightbox" data-gallery="gallery" class="col-md-4">
+      <img src="https://unsplash.it/600.jpg?image=253" class="img-fluid rounded">
+    </a>
+  </div>
+  <div class="row">
+    <a href="https://unsplash.it/1200/768.jpg?image=254" data-toggle="lightbox" data-gallery="gallery" class="col-md-4">
+      <img src="https://unsplash.it/600.jpg?image=254" class="img-fluid rounded">
+    </a>
+    <a href="https://unsplash.it/1200/768.jpg?image=255" data-toggle="lightbox" data-gallery="gallery" class="col-md-4">
+      <img src="https://unsplash.it/600.jpg?image=255" class="img-fluid rounded">
+    </a>
+    <a href="https://unsplash.it/1200/768.jpg?image=256" data-toggle="lightbox" data-gallery="gallery" class="col-md-4">
+      <img src="https://unsplash.it/600.jpg?image=256" class="img-fluid rounded">
+    </a>
+  </div>
+</div> -->
