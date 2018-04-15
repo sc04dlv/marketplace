@@ -5,7 +5,12 @@ from django.db import models
 # from django.contrib.auth.models.User import User
 from django.contrib.auth.models import User
 from django.conf import settings
+
+# работа с изображением
 from PIL import Image
+from imagekit.models.fields import ImageSpecField, ProcessedImageField
+from imagekit.processors import ResizeToFit, Adjust, ResizeToFill
+
 # from django.contrib.contenttypes.models import ContentType
 # from django.contrib.contenttypes.fields import GenericForeignKey
 # from django.contrib.contenttypes.fields import GenericRelation
@@ -79,41 +84,51 @@ class Images(models.Model):
     advertisement = models.ForeignKey(
         Advertisement,
         on_delete=models.CASCADE,
-        # related_name='images' #/%Y/%m/%d'
+        related_name='images'
     )
 
     image = models.ImageField(upload_to=get_image_filename, #'media/image',
                               verbose_name='Image',)
+    image_small  = ImageSpecField(source='image',
+                                  processors=[ResizeToFill(100, 100)],
+                                  format='JPEG',
+                                  options={'quality': 60})
+    image_medium = ImageSpecField(source='image',
+                                  processors=[ResizeToFill(200, 200)],
+                                  format='JPEG',
+                                  options={'quality': 60})
+    image_big    = ImageSpecField(source='image',
+                                  processors=[ResizeToFill(640, 480)],
+                                  format='JPEG',
+                                  options={'quality': 60})
 
-
-
-    def resize_image(self
-                    ,width=None
-                    ,height=None):
-        original_image = Image.open(self.image)#input_image_path)
-        w, h = original_image.size
-        # print('The original image size is {wide} wide x {height} '
-        #       'high'.format(wide=w, height=h))
-
-        if width and height:
-            max_size = (width, height)
-        elif width:
-            max_size = (width, h)
-        elif height:
-            max_size = (w, height)
-        else:
-            # No width or height specified
-            raise RuntimeError('Width or height required!')
-
-        original_image.thumbnail(max_size, Image.ANTIALIAS)
-        original_image.save('images/2018/4/8/test.jpg')#output_image_path)
-
-        scaled_image = Image.open('images/2018/4/8/test.jpg')#output_image_path)
-        width, height = scaled_image.size
-        print('The scaled image size is {wide} wide x {height} '
-              'high'.format(wide=width, height=height))
-
-
+    # def resize_image(self
+    #                 ,width=None
+    #                 ,height=None):
+    #     original_image = Image.open(self.image)#input_image_path)
+    #     w, h = original_image.size
+    #     # print('The original image size is {wide} wide x {height} '
+    #     #       'high'.format(wide=w, height=h))
+    #
+    #     if width and height:
+    #         max_size = (width, height)
+    #     elif width:
+    #         max_size = (width, h)
+    #     elif height:
+    #         max_size = (w, height)
+    #     else:
+    #         # No width or height specified
+    #         raise RuntimeError('Width or height required!')
+    #
+    #     original_image.thumbnail(max_size, Image.ANTIALIAS)
+    #     original_image.save('images/2018/4/8/test.jpg')#output_image_path)
+    #
+    #     scaled_image = Image.open('images/2018/4/8/test.jpg')#output_image_path)
+    #     width, height = scaled_image.size
+    #     print('The scaled image size is {wide} wide x {height} '
+    #           'high'.format(wide=width, height=height))
+    #
+    #
 
 class Bicycle(Advertisement):
     # class Meta(Advertisement.Meta):

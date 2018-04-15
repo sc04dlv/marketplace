@@ -46,8 +46,9 @@ INSTALLED_APPS = [
     'advertisement',
     'user',
 
-    # 'django_file_form',
-    # 'django_file_form.ajaxuploader',
+    'django_file_form',
+    'django_file_form.ajaxuploader',
+    'imagekit',
 ]
 
 MIDDLEWARE = [

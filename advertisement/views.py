@@ -14,8 +14,8 @@ from django.contrib.contenttypes.models import ContentType
 
 from PIL import Image
 
-import urlparse
-import urllib
+# import urlparse
+# import urllib
 
 from .models import Bicycle, Ski, Images
 from .forms import BicycleForm, SkiForm, BaseFilterForm, BicycleFilterForm, ImageFormSet
@@ -68,6 +68,10 @@ def bicycles(request, page_number=1):
 
     current_page = Paginator(bicycles, 5)
     args['bicycles'] = current_page.page(page_number)
+    for bicycle in args['bicycles']:
+        if bicycle.images.first():
+            print(bicycle.images.first().image_small.url)
+
     args['filter_form'] = filter_form
     return render(request, 'advertisement/bicycle/list_bicycle.html', args )
 
@@ -90,7 +94,6 @@ def new_bicycle(request):
                 image = form['image']
                 photo = Images(advertisement=bicycle, image=image)
                 photo.save()
-
             return redirect('view_bicycle', bicycle_id=bicycle.pk)
         else:
             print formBicycle.errors, formSet.errors
@@ -108,10 +111,10 @@ def view_bicycle(request, bicycle_id):
     args = {}
     args['bicycle'] = get_object_or_404(Bicycle, id=bicycle_id)
     args['images'] = Images.objects.filter(advertisement = bicycle_id)
-    # for image in args['images']:
-    #     img=Image.open(image.image)
-    #     image.resize_image(100,100)
-        # img.show() -- открывает изображение в новом окне
+    for image in args['images']:
+        print(image.image_medium.url)
+        # print(image.image_medium.width)
+
 
     args['username'] = request.user.username
     return render(request, 'advertisement/bicycle/view_bicycle.html', args)

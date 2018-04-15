@@ -14,11 +14,13 @@
   <ul> Переключатель задний {{bicycle.jumper_back}} </ul>
 
   <div class="container">
-  {% for image in images %}
     <div class="row">
-      <img src="/media/{{image.image}}">
+      {% for image in images %}
+          <a href="/media/{{image.image}}">
+            <img src="/media/{{image.image_medium}}">
+          </a>
+      {% endfor %}
     </div>
-  {% endfor %}
   </div>
 
   {% if bicycle.user_id == user.id %}

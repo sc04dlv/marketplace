@@ -11,10 +11,10 @@ class ImageForm(forms.ModelForm):
     class Meta:
         model = Images
         fields = ('image', )
-        # widget=forms.FileInput(attrs={'multiple': 'multiple'})
+        widget=forms.FileInput(attrs={'multiple': True})
 
-ImageFormSet = modelformset_factory(Images, form=ImageForm, extra=3, can_delete=True)
-# ImageFormset = inlineformset_factory(Advertisement, Images, fields = '__all__')
+# ImageFormSet = modelformset_factory(Images, form=ImageForm, extra=1, can_delete=True)
+ImageFormSet = inlineformset_factory(Advertisement, Images, fields = '__all__')
 
 
 class AdvertisementForm(forms.ModelForm):
