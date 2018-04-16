@@ -1,5 +1,4 @@
 #coding: utf-8
-
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, render_to_response, redirect
 from django.http import HttpResponse, JsonResponse
@@ -14,6 +13,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from PIL import Image
 
+import os
 # import urlparse
 # import urllib
 
@@ -153,6 +153,11 @@ def delete_bicycle(request, bicycle_id):
     else:
         bicycle.delete()
         return redirect('bicycles')
+        # for image in bicycle.images.all():
+        #     image.delete()
+        # os.remove('/home/sc04dlv/diplom/project/marketplace/' + image.image.url)
+
+
 
 ####### SKI ######
 def skis(request, page_number=1):

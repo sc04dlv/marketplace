@@ -11,11 +11,12 @@ from PIL import Image
 from imagekit.models.fields import ImageSpecField, ProcessedImageField
 from imagekit.processors import ResizeToFit, Adjust, ResizeToFill
 
+from django.dispatch import receiver
 # from django.contrib.contenttypes.models import ContentType
 # from django.contrib.contenttypes.fields import GenericForeignKey
 # from django.contrib.contenttypes.fields import GenericRelation
 import datetime
-
+import os
 
 class BicycleType(models.Model):
     code = models.CharField(max_length=20,)
@@ -101,6 +102,18 @@ class Images(models.Model):
                                   processors=[ResizeToFill(640, 480)],
                                   format='JPEG',
                                   options={'quality': 60})
+
+@receiver(models.signals.pre_delete, sender=Images, weak=False)
+def delete_image(sender, instance, **kwargs):
+    path_to_image = instance.image.path
+    if os.path.exists(path_to_image):
+        os.remove(path_to_image)
+
+@receiver(models.signals.pre_delete, sender=Advertisement, weak=False)
+def delete_photos_from_album(sender, instance, **kwargs):
+    images = Images.objects.filter(advertisement=instance.id)
+    for image in images:
+        image.delete()
 
     # def resize_image(self
     #                 ,width=None
