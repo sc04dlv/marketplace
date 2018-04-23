@@ -17,8 +17,8 @@ import os
 # import urlparse
 # import urllib
 
-from .models import Bicycle, Ski, Images
-from .forms import BicycleForm, SkiForm, BaseFilterForm, BicycleFilterForm, ImageFormSet
+from .models import Advertisement, Bicycle, Ski, Images, AdvertisementType
+from .forms import BicycleForm, SkiForm, BaseFilterForm, BicycleFilterForm, AdvUserFilterForm, ImageFormSet
 
 # class AdvListView(generic.ListView):
 #   template_name = 'advertisement/index.html'
@@ -38,8 +38,39 @@ from .forms import BicycleForm, SkiForm, BaseFilterForm, BicycleFilterForm, Imag
 def categories(request):
     return render(request, 'advertisement/categories.html')
 
+####### USER_ADV #######
+def user_advertisements(request, user_id, page_number=1):
+    args = {}
+    args['user_id'] = user_id
+    advertisements = Advertisement.objects.filter(user_id=user_id)
+    filter_form = AdvUserFilterForm(request.GET)
 
-####### BICYCLE ######
+    # отфильтровываем данные из запроса
+    if filter_form.is_valid():
+        if filter_form.cleaned_data["price_min"]:
+            advertisements = advertisements.filter(price__gte=filter_form.cleaned_data["price_min"])
+        if filter_form.cleaned_data["price_max"]:
+            advertisements = advertisements.filter(price__lte=filter_form.cleaned_data["price_max"])
+        if filter_form.cleaned_data["weight_min"]:
+            advertisements = advertisements.filter(weight__gte=filter_form.cleaned_data["weight_min"])
+        if filter_form.cleaned_data["weight_max"]:
+            advertisements = advertisements.filter(weight__lte=filter_form.cleaned_data["weight_max"])
+
+
+        if filter_form.cleaned_data["adv_type"]:
+            advertisements = advertisements.filter(adv_type__in=request.GET.getlist("adv_type"))
+
+    current_page = Paginator(advertisements, 5)
+    args['advertisements'] = current_page.page(page_number)
+    for bicycle in args['advertisements']:
+        if bicycle.images.first():
+            print(bicycle.images.first().image_small.url)
+
+    args['filter_form'] = filter_form
+    return render(request, 'advertisement/user/adv_user_list.html', args )
+
+
+####### BICYCLE #######
 def bicycles(request, page_number=1):
     args = {}
     bicycles = Bicycle.objects.order_by('-date')
@@ -88,6 +119,7 @@ def new_bicycle(request):
         if formBicycle.is_valid() and formSet.is_valid():
             bicycle = formBicycle.save(commit=False)
             bicycle.user = request.user
+            bicycle.adv_type = AdvertisementType.objects.filter(code='Велосипед')[0]
             bicycle.save()
 
             for form in formSet.cleaned_data:

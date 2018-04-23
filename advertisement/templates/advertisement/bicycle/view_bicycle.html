@@ -3,7 +3,7 @@
 {% block body %}
 
 {% if bicycle %}
-  <ul> Пользователь {{bicycle.user}} </ul>
+  <ul> <a href="{% url 'user_advertisements' bicycle.user.id %}"> Объявления пользователя {{bicycle.user}} </a></ul>
   <ul> Название объявления {{bicycle.title}} </ul>
   <ul> Текст объявления {{bicycle.note}} </ul>
   <ul> Дата подачи объявления {{bicycle.date}} </ul>

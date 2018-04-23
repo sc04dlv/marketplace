@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django import forms
-from .models import Advertisement, Bicycle, Ski, BicycleType, BicycleJumper, Images
+from .models import Advertisement, Bicycle, Ski, BicycleType, BicycleJumper, Images, AdvertisementType
 from django.forms import Textarea
 from django.forms import modelformset_factory
 from django.forms.models import inlineformset_factory
@@ -12,9 +12,11 @@ class ImageForm(forms.ModelForm):
         model = Images
         fields = ('image', )
         # widget=forms.FileInput(attrs={'multiple': True})
+        widget=forms.ClearableFileInput(attrs={'multiple': True})
+
+ImageFormSet = inlineformset_factory(Advertisement, Images, fields = '__all__', extra=1)
 
 # ImageFormSet = modelformset_factory(Images, form=ImageForm, extra=1, can_delete=True)
-ImageFormSet = inlineformset_factory(Advertisement, Images, fields = '__all__')
 
 
 class AdvertisementForm(forms.ModelForm):
@@ -29,6 +31,7 @@ class AdvertisementForm(forms.ModelForm):
 class BicycleForm(forms.ModelForm):
     class Meta(AdvertisementForm.Meta):
         model = Bicycle
+        exclude = ['adv_type']
 
 
 class SkiForm(forms.ModelForm):
@@ -65,15 +68,8 @@ class BicycleFilterForm(BaseFilterForm):
                                                   widget=forms.CheckboxSelectMultiple,
                                                   label="Переключатель задний",) #(attrs={'class': 'form-control'}),)
 
-
-
-
-# class BicycleFilterForm_Test(forms.ModelForm):
-#     price_min   = forms.IntegerField(label="price_min"  ,required=False)
-#     price_max   = forms.IntegerField(label="price_max"  ,required=False)
-#     weight_min  = forms.IntegerField(label="weight_min" ,required=False)
-#     weight_max  = forms.IntegerField(label="weight_max" ,required=False)
-#
-#     class Meta:
-#         model = Bicycle
-#         fields = ['bicycle_type']
+class AdvUserFilterForm(BaseFilterForm):
+    adv_type = forms.ModelMultipleChoiceField(queryset=AdvertisementType.objects.all(),
+                                              required=False,
+                                              widget=forms.CheckboxSelectMultiple,
+                                              label="Тип объявления",)

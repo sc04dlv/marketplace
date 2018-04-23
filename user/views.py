@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib import auth
 from django.contrib.auth.forms import UserCreationForm
+from .forms import CustomUserCreationForm
 
 
 def login(request):
@@ -19,9 +20,9 @@ def login(request):
 
 def register(request):
     args = {}
-    args['form'] = UserCreationForm()
+    args['form'] = CustomUserCreationForm()
     if request.POST:
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
             user = auth.authenticate(username=form.cleaned_data["username"],

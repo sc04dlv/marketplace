@@ -1,2 +1,6 @@
 *.pyc
+*.pio
 *.jpg
+db.sqlite3
+advertisement/migrations/
+settings.py

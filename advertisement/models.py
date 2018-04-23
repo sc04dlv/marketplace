@@ -36,6 +36,14 @@ class BicycleJumper(models.Model):
           self.name,
       ])
 
+class AdvertisementType(models.Model):
+    code = models.CharField(max_length=20,)
+    url  = models.CharField(max_length=20,)
+
+    def __str__(self):
+      return ' '.join([
+          self.code,
+      ])
 
 class Advertisement(models.Model):
     class Meta:
@@ -46,6 +54,11 @@ class Advertisement(models.Model):
         User,
         on_delete=models.CASCADE,
         editable=False,
+    )
+
+    adv_type = models.ForeignKey(
+        AdvertisementType,
+        on_delete=models.CASCADE,
     )
 
     title = models.CharField(

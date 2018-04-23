@@ -1,0 +1,72 @@
+{% extends 'main.html' %}
+
+
+{% block filter %}
+
+{% load bootstrap4 %}
+{% bootstrap_css %}
+  <form class="well" action="{% url 'user_advertisements' user_id %}" method="get" >
+    <div class="modal-body">
+      {{ filter_form.as_p }}
+    </div>
+    <div class="modal-footer-left">
+      <button type="submit" class="btn btn-primary"> Применить </button>
+    </div>
+  </form>
+
+{% endblock %}
+
+{% block body %}
+
+{% if advertisements %}
+    <ul class="list-group">
+    {% for advertisement in advertisements %}
+
+      <a class="list-group-item list-group-item-action" href="{% url advertisement.adv_type.url advertisement.id %}">
+        {% if advertisement.images.first %}
+          <img src="/media/{{ advertisement.images.first.image_small }}">
+        {% endif %}
+        {{ advertisement.title }}
+        {{ advertisement.price }} p.
+        {{ advertisement.date }}
+      </a>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>Объявлений не найдено</p>
+{% endif %}
+
+
+<nav aria-label="...">
+  <ul class="pagination">
+    {% if advertisements.paginator.num_pages > 1 %}
+        {% if advertisements.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="{% url 'user_advertisements' user_id advertisements.previous_page_number %}">&larr;</a>
+          </li>
+        {% else %}
+          <li class="page-item disabled">
+            <a class="page-link" href="#">&larr;</a>
+          </li>
+        {% endif %}
+        {% for page in advertisements.paginator.page_range %}
+          {% if page == advertisements.number %}
+            <li class="page-item disabled"><a class="page-link" href="№">{{page}}</a></li>
+          {% else %}
+            <li class="page-item"><a class="page-link" href="{% url 'user_advertisements' user_id page %}">{{page}}</a></li>
+          {% endif %}
+        {% endfor %}
+        {% if advertisements.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="{% url 'user_advertisements' user_id advertisements.next_page_number %}">&rarr;</a>
+          </li>
+        {% else %}
+          <li class="page-item disabled">
+            <a class="page-link" href="#">&rarr;</a>
+          </li>
+        {% endif %}
+    {% endif %}
+  </ul>
+</nav>
+
+{% endblock %}
