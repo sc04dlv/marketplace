@@ -23,8 +23,8 @@
     {% for advertisement in advertisements %}
 
       <a class="list-group-item list-group-item-action" href="{% url advertisement.adv_type.url advertisement.id %}">
-        {% if advertisement.images.first %}
-          <img src="/media/{{ advertisement.images.first.image_small }}">
+        {% if advertisement.photos.first %}
+          <img src="/media/{{ advertisement.photos.first.file_small }}">
         {% endif %}
         {{ advertisement.title }}
         {{ advertisement.price }} p.

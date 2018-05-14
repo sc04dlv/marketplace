@@ -1,15 +1,16 @@
 #coding: utf-8
-from django.shortcuts import get_object_or_404
-from django.shortcuts import render, render_to_response, redirect
+from django.shortcuts import render, render_to_response, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 # from django.http import HttpResponseRedirect
 from django.http import QueryDict
 
 from django.contrib.auth.models import User
-from django.views import generic
+from django.views import generic, View
 from django.contrib import auth
 from django.core.paginator import Paginator
 from django.contrib.contenttypes.models import ContentType
+
+# from django.core.urlresolvers import reverse
 
 from PIL import Image
 
@@ -17,23 +18,10 @@ import os
 # import urlparse
 # import urllib
 
-from .models import Advertisement, Bicycle, Ski, Images, AdvertisementType
-from .forms import BicycleForm, SkiForm, BaseFilterForm, BicycleFilterForm, AdvUserFilterForm, ImageFormSet
+from .models import Advertisement, Bicycle, Ski, AdvertisementType
+from photos.models import Photo
+from .forms import BicycleForm, SkiForm, BaseFilterForm, BicycleFilterForm, AdvUserFilterForm
 
-# class AdvListView(generic.ListView):
-#   template_name = 'advertisement/index.html'
-#   context_object_name = 'latest_advertisement_list'
-#   paginate_by = 2
-#
-#   def get_queryset(self):
-#     return Advertisement.objects.order_by('-date')#[:5]
-
-# class AdvDetailView(generic.DetailView):
-#     model = Advertisement
-#     template_name = 'advertisement/view.html'
-#     context_object_name = 'latest_advertisement_list'
-
-# return HttpResponse("<html>%s - %s</html>" %(str(User.objects.get(id=request.user.id)) ,str(bicycle.user)))
 
 def categories(request):
     return render(request, 'advertisement/categories.html')
@@ -42,7 +30,7 @@ def categories(request):
 def user_advertisements(request, user_id, page_number=1):
     args = {}
     args['user_id'] = user_id
-    advertisements = Advertisement.objects.filter(user_id=user_id)
+    advertisements = Advertisement.objects.filter(user_id=user_id).order_by('-date')
     filter_form = AdvUserFilterForm(request.GET)
 
     # отфильтровываем данные из запроса
@@ -63,8 +51,8 @@ def user_advertisements(request, user_id, page_number=1):
     current_page = Paginator(advertisements, 5)
     args['advertisements'] = current_page.page(page_number)
     for bicycle in args['advertisements']:
-        if bicycle.images.first():
-            print(bicycle.images.first().image_small.url)
+        if bicycle.photos.first():
+            print(bicycle.photos.first().file_small.url)
 
     args['filter_form'] = filter_form
     return render(request, 'advertisement/user/adv_user_list.html', args )
@@ -100,12 +88,46 @@ def bicycles(request, page_number=1):
     current_page = Paginator(bicycles, 5)
     args['bicycles'] = current_page.page(page_number)
     for bicycle in args['bicycles']:
-        if bicycle.images.first():
-            print(bicycle.images.first().image_small.url)
+        if bicycle.photos.first():
+            print(bicycle.photos.first().file_small.url)
 
     args['filter_form'] = filter_form
     return render(request, 'advertisement/bicycle/list_bicycle.html', args )
 
+
+# def new_bicycle(request):
+#     if not request.user.is_authenticated():
+#         return render(request, 'user/login_error.html')
+#     args = {}
+#     if request.method == 'POST':
+#         formBicycle = BicycleForm(request.POST)
+#         formSet = ImageFormSet(request.POST, request.FILES,
+#                                queryset=Images.objects.none())
+#
+#         if formBicycle.is_valid() and formSet.is_valid():
+#             bicycle = formBicycle.save(commit=False)
+#             bicycle.user = request.user
+#             bicycle.adv_type = AdvertisementType.objects.filter(code='Велосипед')[0]
+#             bicycle.save()
+#
+#             for form in formSet.cleaned_data:
+#                 image = form['image']
+#                 photo = Images(advertisement=bicycle, image=image)
+#                 photo.save()
+#             # return redirect('view_bicycle', bicycle_id=bicycle.pk)
+#             data = {'is_valid': True, 'name': photo.file.name, 'url': photo.file.url}
+#         else:
+#             # print formBicycle.errors, formSet.errors
+#             data = {'is_valid': False}
+#         return JsonResponse(data)
+#     else:
+#         formBicycle = BicycleForm()
+#         formSet = ImageFormSet(queryset=Images.objects.none())
+#
+#         args['form'] = formBicycle
+#         args['formset'] = formSet
+#         args['username'] = request.user.username
+#     return render(request, 'advertisement/bicycle/new_bicycle.html', args )
 
 def new_bicycle(request):
     if not request.user.is_authenticated():
@@ -113,38 +135,31 @@ def new_bicycle(request):
     args = {}
     if request.method == 'POST':
         formBicycle = BicycleForm(request.POST)
-        formSet = ImageFormSet(request.POST, request.FILES,
-                               queryset=Images.objects.none())
 
-        if formBicycle.is_valid() and formSet.is_valid():
+        if formBicycle.is_valid():
             bicycle = formBicycle.save(commit=False)
             bicycle.user = request.user
             bicycle.adv_type = AdvertisementType.objects.filter(code='Велосипед')[0]
             bicycle.save()
 
-            for form in formSet.cleaned_data:
-                image = form['image']
-                photo = Images(advertisement=bicycle, image=image)
-                photo.save()
-            return redirect('view_bicycle', bicycle_id=bicycle.pk)
+            # return redirect('view_bicycle', bicycle_id=bicycle.pk)
+            # перенаправляем на страницу добавления фотографий
+            return redirect('photos:advertisement_photo_edit', adv_id=bicycle.pk)
         else:
-            print formBicycle.errors, formSet.errors
+            print formBicycle.errors
     else:
         formBicycle = BicycleForm()
-        formSet = ImageFormSet(queryset=Images.objects.none())
 
         args['form'] = formBicycle
-        args['formset'] = formSet
         args['username'] = request.user.username
     return render(request, 'advertisement/bicycle/new_bicycle.html', args )
-
 
 def view_bicycle(request, bicycle_id):
     args = {}
     args['bicycle'] = get_object_or_404(Bicycle, id=bicycle_id)
-    args['images'] = Images.objects.filter(advertisement = bicycle_id)
-    for image in args['images']:
-        print(image.image_medium.url)
+    args['photos'] = Photo.objects.filter(advertisement = bicycle_id)
+    for photo in args['photos']:
+        print(photo.file_medium.url)
         # print(image.image_medium.width)
 
 
@@ -168,7 +183,6 @@ def edit_bicycle(request, bicycle_id):
             return redirect('view_bicycle', bicycle_id=bicycle.id)
     else:
         bicycle = Bicycle.objects.get(id=bicycle_id)
-
         # проверяем права на редактирование
         if not User.objects.get(id=request.user.id) == bicycle.user:
             return redirect('view_bicycle', bicycle_id=bicycle_id)
@@ -185,7 +199,7 @@ def delete_bicycle(request, bicycle_id):
     else:
         bicycle.delete()
         return redirect('bicycles')
-        # for image in bicycle.images.all():
+        # for image in bicycle.photo.all():
         #     image.delete()
         # os.remove('/home/sc04dlv/diplom/project/marketplace/' + image.image.url)
 

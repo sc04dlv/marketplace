@@ -1,0 +1,84 @@
+{% extends 'main.html' %}
+
+{% load static %}
+
+{% block body %}
+  {# JQUERY FILE UPLOAD SCRIPTS #}
+  <script src="{% static 'js/jquery-file-upload/vendor/jquery.ui.widget.js' %}"></script>
+  <script src="{% static 'js/jquery-file-upload/jquery.iframe-transport.js' %}"></script>
+  <script src="{% static 'js/jquery-file-upload/jquery.fileupload.js' %}"></script>
+
+  {# PHOTOS PAGE SCRIPTS #}
+  <script src="{% static 'photos/js/basic-upload.js' %}"></script>
+  <!-- <script src="{% static 'photos/js/drag-and-drop-upload.js' %}"></script> -->
+{% endblock %}
+
+
+{% block content %}
+  <h1 class="page-header">
+    {{ advertisement.title }}, {{ advertisement.price }}р.
+  </h1>
+  <div class="row">
+    <div class="col-md-3">
+      <div class="panel panel-default">
+        <div class="list-group">
+          <!-- Кнопка загрузки файлов -->
+          <div style="margin-bottom: 20px;">
+            <button type="button" class="btn btn-primary js-upload-photos">
+              <span class="glyphicon glyphicon-cloud-upload"></span> Загрузить фотографии
+            </button>
+            <input id="fileupload" type="file" name="file" multiple
+                   style="display: none;"
+                   data-url="{% url 'photos:advertisement_photo_edit' advertisement.id %}"
+                   data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'>
+          </div>
+          <!-- Поле drag-and-drop-upload -->
+          <div class="well text-muted text-center" style="padding-top: 4rem; padding-bottom: 4rem;">
+            <span class="glyphicon glyphicon-arrow-down" style="font-size: 4rem;"></span>
+            <h3>Перетащите сюда фотографии для загрузки</h3>
+          </div>
+
+          <input id="fileupload" type="file" name="file" multiple
+                 style="display: none;"
+                 data-url="{% url 'photos:advertisement_photo_edit' advertisement.id %}"
+                 data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'>
+          <div style="margin-bottom: 20px;">
+            <form method="get" action="{% url advertisement.adv_type.url advertisement.id %}">
+              <button type="submit" class="btn btn-primary">
+                 <span class="glyphicon glyphicon-trash"></span>Завершить
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-9">
+      <form method="post" action="{% url 'photos:clear_adv_photo' advertisement.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <button type="submit" class="btn btn-danger pull-right">
+          <span class="glyphicon glyphicon-trash"></span> Удалить все фотографии
+        </button>
+      </form>
+      <!-- Галлерея загруженных фотографий -->
+      <table id="gallery" class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Фотографии</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for photo in photos %}
+            <tr>
+              <td>
+                <a href="{{ photo.file.url }}">
+                  <img src="{{ photo.file_small.url }}">
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

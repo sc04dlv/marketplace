@@ -39,8 +39,8 @@
     <ul class="list-group">
     {% for bicycle in bicycles %}
       <a class="list-group-item list-group-item-action" href="{% url 'view_bicycle' bicycle.id %}">
-        {% if bicycle.images.first %}
-          <img src="/media/{{ bicycle.images.first.image_small }}">
+        {% if bicycle.photos.first %}
+          <img src="/media/{{ bicycle.photos.first.file_small }}">
         {% endif %}
         {{ bicycle.title }}
         {{ bicycle.price }} p.

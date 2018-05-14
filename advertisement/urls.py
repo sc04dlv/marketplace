@@ -1,24 +1,15 @@
-from django.conf.urls import url, include
-# from django.conf.urls.static import static
-# from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-# from django.conf import settings
+#coding: utf-8
 
+from django.conf.urls import url, include
 from . import views
 
 urlpatterns = [
-  #url(r'^(?P<advertisement_id>[0-9]+)/$', views.view),
-  #url(r'^$', views.AdvListView.as_view(), name='index'),
-  # url(r'^(?P<pk>[0-9]+)/$', views.AdvDetailView.as_view(), name='view'),
-
-  # url(r'^(?P<advertisement_id>[0-9]+)/$', views.view, name='view'),
-  # url(r'^page/(?P<page_number>[0-9]+)/$', views.list, name='list'),
-  # url(r'^new/$', views.new, name='new'),
-  # url(r'^(?P<advertisement_id>[0-9]+)/edit/$', views.edit, name='edit'),
   url(r'^user/(?P<user_id>[0-9]+)/$'
                                                     ,views.user_advertisements ,name='user_advertisements'),
   url(r'^user/(?P<user_id>[0-9]+)/page/(?P<page_number>[0-9]+)/$'
                                                     ,views.user_advertisements ,name='user_advertisements'),
 
+  # при добавлении нового типа добавить тип с url в таблицу advertisement_type
   url(r'^bicycle/$'                                 ,views.bicycles       ,name='bicycles'),
   url(r'^bicycle/page/(?P<page_number>[0-9]+)/$'    ,views.bicycles       ,name='bicycles'),
   url(r'^bicycle/new/$'                             ,views.new_bicycle    ,name='new_bicycle',),
@@ -34,7 +25,3 @@ urlpatterns = [
 
   url(r'^$'                                         ,views.categories     ,name='categories'),
 ]
-
-# if settings.DEBUG:
-#     urlpatterns += staticfiles_urlpatterns() + static(
-#     settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

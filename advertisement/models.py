@@ -75,7 +75,7 @@ class Advertisement(models.Model):
     )
 
     price = models.IntegerField()
-    ident = models.IntegerField(blank = True, null=True,)
+    # ident = models.IntegerField(blank = True, null=True,)
     weight = models.IntegerField(blank = True,)
     year = models.IntegerField(blank = True,)
 
@@ -87,46 +87,48 @@ class Advertisement(models.Model):
       ])
 
 def get_image_filename(instance, filename):
+    return null
     # title = instance.advertisement.id
     # slug = slugify(title)
-    now = datetime.datetime.now()
-    str(now)
-    slug = instance.advertisement.id
-    return "images/%s/%s/%s/%s-%s" % (now.year, now.month, now.day, slug, filename)
+    # now = datetime.datetime.now()
+    # str(now)
+    # slug = instance.advertisement.id
+    # return "images/%s/%s/%s/%s-%s" % (now.year, now.month, now.day, slug, filename)
 
-class Images(models.Model):
-    advertisement = models.ForeignKey(
-        Advertisement,
-        on_delete=models.CASCADE,
-        related_name='images'
-    )
 
-    image = models.ImageField(upload_to=get_image_filename, #'media/image',
-                              verbose_name='Image',)
-    image_small  = ImageSpecField(source='image',
-                                  processors=[ResizeToFill(100, 100)],
-                                  format='JPEG',
-                                  options={'quality': 60})
-    image_medium = ImageSpecField(source='image',
-                                  processors=[ResizeToFill(200, 200)],
-                                  format='JPEG',
-                                  options={'quality': 60})
-    image_big    = ImageSpecField(source='image',
-                                  processors=[ResizeToFill(640, 480)],
-                                  format='JPEG',
-                                  options={'quality': 60})
-
-@receiver(models.signals.pre_delete, sender=Images, weak=False)
-def delete_image(sender, instance, **kwargs):
-    path_to_image = instance.image.path
-    if os.path.exists(path_to_image):
-        os.remove(path_to_image)
-
-@receiver(models.signals.pre_delete, sender=Advertisement, weak=False)
-def delete_photos_from_album(sender, instance, **kwargs):
-    images = Images.objects.filter(advertisement=instance.id)
-    for image in images:
-        image.delete()
+# class Images(models.Model):
+#     advertisement = models.ForeignKey(
+#         Advertisement,
+#         on_delete=models.CASCADE,
+#         related_name='images'
+#     )
+#
+#     image = models.ImageField(upload_to=get_image_filename, #'media/image',
+#                               verbose_name='Image',)
+#     image_small  = ImageSpecField(source='image',
+#                                   processors=[ResizeToFill(100, 100)],
+#                                   format='JPEG',
+#                                   options={'quality': 60})
+#     image_medium = ImageSpecField(source='image',
+#                                   processors=[ResizeToFill(200, 200)],
+#                                   format='JPEG',
+#                                   options={'quality': 60})
+#     image_big    = ImageSpecField(source='image',
+#                                   processors=[ResizeToFill(640, 480)],
+#                                   format='JPEG',
+#                                   options={'quality': 60})
+#
+# @receiver(models.signals.pre_delete, sender=Images, weak=False)
+# def delete_image(sender, instance, **kwargs):
+#     path_to_image = instance.image.path
+#     if os.path.exists(path_to_image):
+#         os.remove(path_to_image)
+#
+# @receiver(models.signals.pre_delete, sender=Advertisement, weak=False)
+# def delete_photos_from_album(sender, instance, **kwargs):
+#     images = Images.objects.filter(advertisement=instance.id)
+#     for image in images:
+#         image.delete()
 
     # def resize_image(self
     #                 ,width=None
@@ -162,7 +164,11 @@ class Bicycle(Advertisement):
 
     size = models.IntegerField()
 
-    # bicycle_types = (
+    bicycle_type = models.ForeignKey(
+        BicycleType,
+        related_name='bicycle_type',
+    )
+
     #     ('rigid',       'ригид'),
     #     ('hardtail',    'хардтейл'), #hardtail
     #     ('dvuhpodves',  'двухподвес'), #full_suspension
@@ -171,16 +177,7 @@ class Bicycle(Advertisement):
     #     ('track',       'трековый'),
     #     ('children',    'детский'),
     #     ('bmx',         'BMX'),
-    #     ('skladnoj',    'складной'), #folding
-    # )
-    # bicycle_type = models.CharField(max_length=20,
-    #                                 choices=bicycle_types,
-    #                                )
-
-    bicycle_type = models.ForeignKey(
-        BicycleType,
-        related_name='bicycle_type',
-    )
+    #     ('skladnoj',    'складной'),
 
     jumper_front = models.ForeignKey(
         BicycleJumper,
@@ -196,17 +193,47 @@ class Bicycle(Advertisement):
         null=True,
     )
 
+    transmission_front_list = (
+        (1, 1),
+        (2, 2),
+        (3, 3),
+    )
+    transmission_front = models.IntegerField(choices=transmission_front_list,
+                                             blank=True,
+                                             null=True,)
+
+    transmission_back_list = (
+        (1, 1),
+        (2, 2),
+        (3, 3),
+        (4, 4),
+        (5, 5),
+        (6, 6),
+        (7, 7),
+        (8, 8),
+        (9, 9),
+        (10, 10),
+        (11, 11),
+        (12, 12),
+    )
+    transmission_back = models.IntegerField(choices=transmission_back_list,
+                                            blank=True,
+                                            null=True,)
+
+class SkiType(models.Model):
+    code = models.CharField(max_length=20,)
+    name = models.CharField(max_length=40,)
+
+    def __str__(self):
+      return ' '.join([
+          self.name,
+      ])
 
 class Ski(Advertisement):
     size = models.IntegerField()
     for_weight = models.IntegerField(blank = True,)
 
-    ski_types = (
-        ('classic',  'классические'),
-        ('skate',    'коньковые'),
-        ('children', 'детские'),
+    ski_type = models.ForeignKey(
+        SkiType,
+        related_name='ski_type',
     )
-
-    ski_type = models.CharField(max_length=20,
-                                choices=ski_types,
-                               )

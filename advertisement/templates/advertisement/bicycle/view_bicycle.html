@@ -15,9 +15,9 @@
 
   <div class="container">
     <div class="row">
-      {% for image in images %}
-          <a href="/media/{{image.image}}">
-            <img src="/media/{{image.image_medium}}">
+      {% for photo in photos %}
+          <a href="/media/{{photo.file}}">
+            <img src="/media/{{photo.file_medium}}">
           </a>
       {% endfor %}
     </div>
@@ -26,6 +26,7 @@
   {% if bicycle.user_id == user.id %}
     <li><a href="{% url 'delete_bicycle' bicycle.id %}"> Удалить </a></li>
     <li><a href="{% url 'edit_bicycle' bicycle.id %}"> Редактировать </a></li>
+    <li><a href="/photos/advertisement/{{bicycle.id}}/edit/"> Редактировать фотографии </a></li>
   {% endif %}
   <li><a href="{% url 'categories' %}"> Объявления </a></li>
 {% else %}
