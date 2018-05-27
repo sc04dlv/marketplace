@@ -3,7 +3,9 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url(r'^advertisement/(?P<adv_id>[0-9]+)/delete/$', views.clear_adv_photo, name='clear_adv_photo'),
+    url(r'^advertisement/(?P<adv_id>[0-9]+)/delete/all/$', views.clear_adv_photo, name='clear_adv_photo'),
+    url(r'^advertisement/(?P<adv_id>[0-9]+)/delete/(?P<photo_id>[0-9]+)/$', views.delete_adv_photo, name='delete_adv_photo'),
+
     # url(r'^basic-upload/$', views.BasicUploadView.as_view(), name='basic_upload'),
 
     url(r'^advertisement/(?P<adv_id>[0-9]+)/edit/$', views.AdvertisementPhotoEditView.as_view(), name='advertisement_photo_edit'),

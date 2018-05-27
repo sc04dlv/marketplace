@@ -114,7 +114,7 @@ def bicycles(request, page_number=1):
 #                 image = form['image']
 #                 photo = Images(advertisement=bicycle, image=image)
 #                 photo.save()
-#             # return redirect('view_bicycle', bicycle_id=bicycle.pk)
+#             # return redirect('view_bicycle', adv_id=bicycle.pk)
 #             data = {'is_valid': True, 'name': photo.file.name, 'url': photo.file.url}
 #         else:
 #             # print formBicycle.errors, formSet.errors
@@ -142,7 +142,7 @@ def new_bicycle(request):
             bicycle.adv_type = AdvertisementType.objects.filter(code='Велосипед')[0]
             bicycle.save()
 
-            # return redirect('view_bicycle', bicycle_id=bicycle.pk)
+            # return redirect('view_bicycle', adv_id=bicycle.pk)
             # перенаправляем на страницу добавления фотографий
             return redirect('photos:advertisement_photo_edit', adv_id=bicycle.pk)
         else:
@@ -154,10 +154,10 @@ def new_bicycle(request):
         args['username'] = request.user.username
     return render(request, 'advertisement/bicycle/new_bicycle.html', args )
 
-def view_bicycle(request, bicycle_id):
+def view_bicycle(request, adv_id):
     args = {}
-    args['bicycle'] = get_object_or_404(Bicycle, id=bicycle_id)
-    args['photos'] = Photo.objects.filter(advertisement = bicycle_id)
+    args['bicycle'] = get_object_or_404(Bicycle, id=adv_id)
+    args['photos'] = Photo.objects.filter(advertisement = adv_id)
     for photo in args['photos']:
         print(photo.file_medium.url)
         # print(image.image_medium.width)
@@ -166,7 +166,7 @@ def view_bicycle(request, bicycle_id):
     args['username'] = request.user.username
     return render(request, 'advertisement/bicycle/view_bicycle.html', args)
 
-def edit_bicycle(request, bicycle_id):
+def edit_bicycle(request, adv_id):
     args = {}
     if not request.user.is_authenticated():
         return render(request, 'user/login_error.html')
@@ -176,26 +176,26 @@ def edit_bicycle(request, bicycle_id):
         if form.is_valid():
             bicycle = form.save(commit=False)
             bicycle.user = User.objects.get(id=request.user.id)
-            bicycle.id = bicycle_id
+            bicycle.id = adv_id
             bicycle.save( update_fields=['title', 'note', 'price', 'ident', 'year', 'size',
                                          'weight', 'bicycle_type', 'jumper_front', 'jumper_back'],
                           force_update='True')
-            return redirect('view_bicycle', bicycle_id=bicycle.id)
+            return redirect('view_bicycle', adv_id=bicycle.id)
     else:
-        bicycle = Bicycle.objects.get(id=bicycle_id)
+        bicycle = Bicycle.objects.get(id=adv_id)
         # проверяем права на редактирование
         if not User.objects.get(id=request.user.id) == bicycle.user:
-            return redirect('view_bicycle', bicycle_id=bicycle_id)
+            return redirect('view_bicycle', adv_id=adv_id)
         args['form'] = BicycleForm(instance=bicycle)
-        args['bicycle_id'] = bicycle_id
+        args['adv_id'] = adv_id
         args['username'] = request.user.username #auth.get_user(request).username
         return render(request, 'advertisement/bicycle/edit_bicycle.html', args )
 
-def delete_bicycle(request, bicycle_id):
-    bicycle = Bicycle.objects.get(id=bicycle_id)
+def delete_bicycle(request, adv_id):
+    bicycle = Bicycle.objects.get(id=adv_id)
     # проверяем права на удаление
     if not User.objects.get(id=request.user.id) == bicycle.user:
-        return redirect('view_bicycle', bicycle_id=bicycle_id)
+        return redirect('view_bicycle', adv_id=adv_id)
     else:
         bicycle.delete()
         return redirect('bicycles')
@@ -225,19 +225,19 @@ def new_ski(request):
             ski.ident = 123
             ski.user = User.objects.get(id=request.user.id) #auth.get_user(request).id
             ski.save()
-            return redirect('view_ski', ski_id=ski.pk)
+            return redirect('view_ski', adv_id=ski.pk)
     else:
         args['form'] = SkiForm()
         args['username'] = request.user.username
         return render(request, 'advertisement/ski/new_ski.html', args )
 
-def view_ski(request, ski_id):
+def view_ski(request, adv_id):
     args = {}
-    args['ski'] = get_object_or_404(Ski, id=ski_id)
+    args['ski'] = get_object_or_404(Ski, id=adv_id)
     args['username'] = request.user.username
     return render(request, 'advertisement/ski/view_ski.html', args)
 
-def edit_ski(request, ski_id):
+def edit_ski(request, adv_id):
     args = {}
     if not request.user.is_authenticated():
         return render(request, 'user/login_error.html')
@@ -247,13 +247,13 @@ def edit_ski(request, ski_id):
             ski = form.save(commit=False)
             ski.ident = 123
             ski.user = User.objects.get(id=request.user.id)
-            ski.id = ski_id
+            ski.id = adv_id
             ski.save( update_fields=['title', 'note', 'price', 'ident', 'year', 'size', 'weight', 'for_weight', 'ski_type'],
                           force_update='True')
-            return redirect('view_ski', ski_id=ski.id)
+            return redirect('view_ski', adv_id=ski.id)
     else:
-        ski = Ski.objects.get(id=ski_id)
+        ski = Ski.objects.get(id=adv_id)
         args['form'] = SkiForm(instance=ski)
-        args['ski_id'] = ski_id
+        args['adv_id'] = adv_id
         args['username'] = request.user.username #auth.get_user(request).username
         return render(request, 'advertisement/ski/edit_ski.html', args )

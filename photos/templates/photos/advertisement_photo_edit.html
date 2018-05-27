@@ -74,6 +74,13 @@
                 <a href="{{ photo.file.url }}">
                   <img src="{{ photo.file_small.url }}">
                 </a>
+                <!-- <form method="post" action="{% url 'photos:delete_adv_photo' advertisement.id photo.id %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="next" value="{{ request.path }}">
+                  <button type="submit" class="btn btn-danger pull-right">
+                    <span class="glyphicon glyphicon-trash"></span> Удалить фотографию
+                  </button>
+                </form> -->
               </td>
             </tr>
           {% endfor %}
