@@ -11,14 +11,16 @@ Select race
         <a class="list-group-item list-group-item-action" href="{% url 'race_home' race.0.title %}">
           {{race.0.title}}
         </a>
-        {% if race.1 %}
-          <a class="list-group-item list-group-item-action" href="{% url 'registration_remove' race.0.title %}">
-            Remove registration
-          </a>
-        {% else %}
-          <a class="list-group-item list-group-item-action" href="{% url 'registration' race.0.title %}">
-            Registration
-          </a>
+        {% if user.is_authenticated %}
+          {% if race.1 %}
+            <a class="list-group-item list-group-item-action" href="{% url 'registration_remove' race.0.title %}">
+              Remove registration
+            </a>
+          {% else %}
+            <a class="list-group-item list-group-item-action" href="{% url 'registration' race.0.title %}">
+              Registration
+            </a>
+          {% endif %}
         {% endif %}
       </li>
       {% endif %}

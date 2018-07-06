@@ -8,13 +8,19 @@ Race info
         <a class="list-group-item list-group-item-action" href="{% url 'protocol_all' race.title %}">
           Protocol of {{race.title}} race
         </a>
-        {% if registration %}
-          <a class="list-group-item list-group-item-action" href="{% url 'milestones' race.title %}">
-            Personal protocol and chack milestones
-          </a>
+        {% if user.is_authenticated %}
+          {% if registration %}
+            <a class="list-group-item list-group-item-action" href="{% url 'milestones' race.title %}">
+              Personal protocol and chack milestones
+            </a>
+          {% else %}
+            <a class="list-group-item list-group-item-action" href="{% url 'race_select' %}">
+              Personal protocol and chack milestones (please register)
+            </a>
+          {% endif %}
         {% else %}
-          <a class="list-group-item list-group-item-action" href="{% url 'race_select' %}">
-            Personal protocol and chack milestones (please register)
+          <a class="list-group-item list-group-item-action">
+            Personal protocol and chack milestones (please login)
           </a>
         {% endif %}
     </ul>
