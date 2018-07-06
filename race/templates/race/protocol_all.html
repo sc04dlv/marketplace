@@ -1,0 +1,48 @@
+{% extends 'main.html' %}
+
+
+{% block body %}
+{% if races %}
+  <ul class="nav nav-tabs">
+    {% for race in races %}
+    <li class="nav-item">
+      {% if race.title == race_code %}
+        <a class="nav-link active" href="{% url 'protocol_all' race.title %}">
+      {% else %}
+        <a class="nav-link disabled" href="{% url 'protocol_all' race.title %}">
+      {% endif %}
+          {{race.title}}
+        </a>
+    {% endfor %}
+    </li>
+  </ul>
+{% endif %}
+
+{% if protocols %}
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">User_name</th>
+        <th scope="col">Last MS</th>
+        <th scope="col">Date/Time</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for protocol in protocols %}
+      {% if protocol.0 and protocol.2 %}
+        <tr>
+          <th scope="col">
+            <a href="{% url 'protocol_user' race_code protocol.0 %}">
+              {{ protocol.0 }}
+            </a>
+          </th>
+          <th scope="col">{{ protocol.1.milestone.title }}</th>
+          <th scope="col">{{ protocol.1.date }}</th>
+        </tr>
+      {% endif %}
+    {% endfor %}
+    </tbody>
+  </table>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'main.html' %}
+
+
+{% block body %}
+Select race
+{% if races %}
+    <ul class="list-group">
+    {% for race in races %}
+      {% if race.0 %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <a class="list-group-item list-group-item-action" href="{% url 'race_home' race.0.title %}">
+          {{race.0.title}}
+        </a>
+        {% if race.1 %}
+          <a class="list-group-item list-group-item-action" href="{% url 'registration_remove' race.0.title %}">
+            Remove registration
+          </a>
+        {% else %}
+          <a class="list-group-item list-group-item-action" href="{% url 'registration' race.0.title %}">
+            Registration
+          </a>
+        {% endif %}
+      </li>
+      {% endif %}
+    {% endfor %}
+    </ul>
+{% endif %}
+
+{% endblock %}

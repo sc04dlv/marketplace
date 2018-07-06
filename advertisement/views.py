@@ -177,7 +177,7 @@ def edit_bicycle(request, adv_id):
             bicycle = form.save(commit=False)
             bicycle.user = User.objects.get(id=request.user.id)
             bicycle.id = adv_id
-            bicycle.save( update_fields=['title', 'note', 'price', 'ident', 'year', 'size',
+            bicycle.save( update_fields=['title', 'note', 'price', 'year', 'size',
                                          'weight', 'bicycle_type', 'jumper_front', 'jumper_back'],
                           force_update='True')
             return redirect('view_bicycle', adv_id=bicycle.id)
@@ -222,7 +222,6 @@ def new_ski(request):
         form = SkiForm(request.POST)
         if form.is_valid():
             ski = form.save(commit=False)
-            ski.ident = 123
             ski.user = User.objects.get(id=request.user.id) #auth.get_user(request).id
             ski.save()
             return redirect('view_ski', adv_id=ski.pk)
@@ -245,10 +244,9 @@ def edit_ski(request, adv_id):
         form = SkiForm(request.POST)
         if form.is_valid():
             ski = form.save(commit=False)
-            ski.ident = 123
             ski.user = User.objects.get(id=request.user.id)
             ski.id = adv_id
-            ski.save( update_fields=['title', 'note', 'price', 'ident', 'year', 'size', 'weight', 'for_weight', 'ski_type'],
+            ski.save( update_fields=['title', 'note', 'price', 'year', 'size', 'weight', 'for_weight', 'ski_type'],
                           force_update='True')
             return redirect('view_ski', adv_id=ski.id)
     else:

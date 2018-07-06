@@ -7,23 +7,6 @@
 {% bootstrap_css %}
   <form class="well" action="{% url 'bicycles' %}" method="get" >
     <div class="modal-body">
-      <!-- {{ filter_form.price_min.errors }}
-      {{ filter_form.price_min.label_tag }}
-      {{ filter_form.price_min }}
-
-      {{ filter_form.price_max.errors }}
-      {{ filter_form.price_max.label_tag }}
-      {{ filter_form.price_max }}
-
-      <p>Вес</p>
-      {{ filter_form.weight_min.errors }}
-      {{ filter_form.weight_min.label_tag }}
-      {{ filter_form.weight_min }}
-
-      {{ filter_form.weight_max.errors }}
-      {{ filter_form.weight_max.label_tag }}
-      {{ filter_form.weight_max }} -->
-
       {{ filter_form.as_p }}
     </div>
     <div class="modal-footer-left">

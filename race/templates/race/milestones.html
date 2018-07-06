@@ -1,0 +1,26 @@
+{% extends 'main.html' %}
+
+
+{% block body %}
+Protocol of {{ username }}
+{% if protocols %}
+    <ul class="list-group">
+    {% for protocol in protocols %}
+      {% if protocol.0 %}
+        {% if protocol.1.first.date %}
+          <a class="list-group-item list-group-item-action" href="{% url 'milestone_remove' protocol.0.race protocol.1.first.id %}">
+            {{ protocol.0 }}
+            {{ protocol.1.first.date }}
+            Отменить отметку
+        {% else %}
+          <a class="list-group-item list-group-item-action" href="{% url 'milestone_check' protocol.0.race protocol.0.id %}">
+            {{ protocol.0 }}
+            Отметиться
+        {% endif %}
+        </a>
+      {% endif %}
+    {% endfor %}
+    </ul>
+{% endif %}
+
+{% endblock %}

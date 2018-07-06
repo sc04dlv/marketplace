@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^advertisement/', include('advertisement.urls')),
     url(r'^photos/', include('photos.urls', namespace='photos')),
+    url(r'^race/', include('race.urls')),
     url(r'^$', include('advertisement.urls')),
 ]
 

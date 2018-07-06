@@ -1,0 +1,23 @@
+{% extends 'main.html' %}
+
+
+{% block body %}
+Race info
+{% if race %}
+    <ul class="list-group">
+        <a class="list-group-item list-group-item-action" href="{% url 'protocol_all' race.title %}">
+          Protocol of {{race.title}} race
+        </a>
+        {% if registration %}
+          <a class="list-group-item list-group-item-action" href="{% url 'milestones' race.title %}">
+            Personal protocol and chack milestones
+          </a>
+        {% else %}
+          <a class="list-group-item list-group-item-action" href="{% url 'race_select' %}">
+            Personal protocol and chack milestones (please register)
+          </a>
+        {% endif %}
+    </ul>
+{% endif %}
+
+{% endblock %}

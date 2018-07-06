@@ -55,6 +55,8 @@ class BaseFilterForm(forms.Form):
 
 class BicycleFilterForm(BaseFilterForm):
     # bicycle_type = forms.CharField(label="bicycle_type" ,required=False)
+    size_min  = forms.IntegerField(label="Размер с" ,required=False)
+    size_max  = forms.IntegerField(label="Размер по" ,required=False)
     bicycle_type = forms.ModelMultipleChoiceField(queryset=BicycleType.objects.all(),
                                                   required=False,
                                                   widget=forms.CheckboxSelectMultiple,
